@@ -12,7 +12,7 @@ public class Genome
      source + 7 bit id + sink + 7 bit id + 16 bit weight
      7 bit ids allows 128 neuron types
     */
-    public Genome(int geneLength = 32, int numGenes = 8, bool genesis = false)
+    public Genome( int numGenes,int geneLength = 32)
     {
         GeneLength = geneLength;
         NumGenes = numGenes;
@@ -68,7 +68,10 @@ public class Genome
     {
         //System.Convert.ToDouble(gene.Substring(16,16),)/8000f;
         long i = System.Convert.ToInt64(gene.Substring(16,16),2);
-        return (float)i/8000f-4f;
+        float str = (float)i/8000f-4f;
+        if(Mathf.Abs(str)>4)
+            str = 4f*Mathf.Sign(str);
+        return str;
     }
 
     public void Mutate(int n)

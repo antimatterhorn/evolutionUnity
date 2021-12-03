@@ -25,6 +25,7 @@ public class InternalNeuron
 
 public class SenseAlive
 {
+    private float mValue = 0F;
     private CreatureController mCreature;
     private WorldController mWorld;
 
@@ -35,10 +36,12 @@ public class SenseAlive
     }
 
     public float call() => 1.0F;
+    public float value { get => mValue; set => mValue = value;}
 }
 
 public class SenseAge
 {
+    private float mValue = 0F;
     private CreatureController mCreature;
     private WorldController mWorld;
 
@@ -48,11 +51,13 @@ public class SenseAge
         mWorld = _world;
     }
 
-    public float call() => mCreature.Age;
+    public float call() => (mCreature.Age);
+    public float value { get => mValue; set => mValue = value;}
 }
 
 public class SensePosX
 {
+    private float mValue = 0F;
     private CreatureController mCreature;
     private WorldController mWorld;
     private Rigidbody2D rigidBody;
@@ -74,10 +79,12 @@ public class SensePosX
         // -1 if close to left edge
         return 2f*(posx)/(xmax-xmin);
     }
+    public float value { get => mValue; set => mValue = value;}
 }
 
 public class SensePosY
 {
+    private float mValue = 0F;
     private CreatureController mCreature;
     private WorldController mWorld;
     private Rigidbody2D rigidBody;
@@ -97,10 +104,12 @@ public class SensePosY
 
         return 2f*(posy)/(ymax-ymin);
     }
+    public float value { get => mValue; set => mValue = value;}
 }
 
 public class SenseRandom
 {
+    private float mValue = 0F;
     public SenseRandom(CreatureController _creature, WorldController _world)
     {
 
@@ -110,6 +119,7 @@ public class SenseRandom
     {
         return Random.Range(-1f,1f);
     }
+    public float value { get => mValue; set => mValue = value;}
 }
 
 public class MoveX
@@ -130,7 +140,8 @@ public class MoveX
     public float value { get => mValue; set => mValue = value;}
     public void call()
     {
-        rigidBody.velocity = new Vector2(mValue,rigidBody.velocity.y);
+        float speed = Mathf.Min(Mathf.Abs(mValue),mCreature.maxSpeed)*Mathf.Sign(mValue);
+        rigidBody.velocity = new Vector2(speed,rigidBody.velocity.y);
     }
 
     public void input(float value)
@@ -157,7 +168,8 @@ public class MoveY
     public float value { get => mValue; set => mValue = value;}
     public void call()
     {
-        rigidBody.velocity = new Vector2(rigidBody.velocity.x,mValue);
+        float speed = Mathf.Min(Mathf.Abs(mValue),mCreature.maxSpeed)*Mathf.Sign(mValue);
+        rigidBody.velocity = new Vector2(rigidBody.velocity.x,speed);
     }
 
     public void input(float value)
