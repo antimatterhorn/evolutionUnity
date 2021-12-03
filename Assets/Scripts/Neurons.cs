@@ -2,178 +2,116 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class InternalNeuron
+public class Neuron
 {
-    private float mValue = 0F;
-    private CreatureController mCreature;
-    private WorldController mWorld;
+    public float value { get;set;}    
+    public CreatureController creature { get;set;}
+    public WorldController world {get;set;}
 
-    public InternalNeuron(CreatureController _creature, WorldController _world)
+    public Neuron(){}
+    public Neuron(CreatureController _creature, WorldController _world)
     {
-        mCreature = _creature;
-        mWorld = _world;
+        creature = _creature;
+        world = _world;
     }
-
-    public float value { get => mValue; set => mValue = value;}
-    public float call()  => (float)System.Math.Tanh((double)mValue);
-    public void input(float value)
-    {
-        mValue = value;
-    }
+    public virtual float call()  => (float)System.Math.Tanh((double)value);
 }
 
-public class SenseAlive
+public class SenseAlive : Neuron
 {
-    private float mValue = 0F;
-    private CreatureController mCreature;
-    private WorldController mWorld;
-
-    public SenseAlive(CreatureController _creature, WorldController _world)
-    {
-        mCreature = _creature;
-        mWorld = _world;
-    }
-
-    public float call() => 1.0F;
-    public float value { get => mValue; set => mValue = value;}
+    public SenseAlive(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call() => 1.0F;
 }
 
-public class SenseAge
+public class SenseAge : Neuron
 {
-    private float mValue = 0F;
-    private CreatureController mCreature;
-    private WorldController mWorld;
-
-    public SenseAge(CreatureController _creature, WorldController _world)
-    {
-        mCreature = _creature;
-        mWorld = _world;
-    }
-
-    public float call() => (mCreature.Age);
-    public float value { get => mValue; set => mValue = value;}
+    public SenseAge(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call() => (creature.Age/world.epoch);
 }
 
-public class SensePosX
-{
-    private float mValue = 0F;
-    private CreatureController mCreature;
-    private WorldController mWorld;
-    private Rigidbody2D rigidBody;
+public class SensePosX : Neuron
+{    private Rigidbody2D rigidBody;
 
     public SensePosX(CreatureController _creature, WorldController _world)
     {
-        mCreature = _creature;
-        mWorld = _world;
-        rigidBody = mCreature.GetComponent<Rigidbody2D>();
+        creature = _creature;
+        world = _world;
+        rigidBody = creature.GetComponent<Rigidbody2D>();
     }
 
-    public float call()
+    public override float call()
     {
-        float xmax = mWorld.xmax;
-        float xmin = mWorld.xmin;
+        float xmax = world.xmax;
+        float xmin = world.xmin;
         float posx = rigidBody.position.x;
 
         // this returns +1 if close to right edge
         // -1 if close to left edge
         return 2f*(posx)/(xmax-xmin);
     }
-    public float value { get => mValue; set => mValue = value;}
 }
 
-public class SensePosY
+public class SensePosY : Neuron
 {
-    private float mValue = 0F;
-    private CreatureController mCreature;
-    private WorldController mWorld;
     private Rigidbody2D rigidBody;
 
     public SensePosY(CreatureController _creature, WorldController _world)
     {
-        mCreature = _creature;
-        mWorld = _world;
-        rigidBody = mCreature.GetComponent<Rigidbody2D>();
+        creature = _creature;
+        world = _world;
+        rigidBody = creature.GetComponent<Rigidbody2D>();
     }
 
-    public float call()
+    public override float call()
     {
-        float ymax = mWorld.ymax;
-        float ymin = mWorld.ymin;
+        float ymax = world.ymax;
+        float ymin = world.ymin;
         float posy = rigidBody.position.y;
 
         return 2f*(posy)/(ymax-ymin);
     }
-    public float value { get => mValue; set => mValue = value;}
 }
 
-public class SenseRandom
+public class SenseRandom : Neuron
 {
-    private float mValue = 0F;
-    public SenseRandom(CreatureController _creature, WorldController _world)
-    {
-
-    }
-
-    public float call()
-    {
-        return Random.Range(-1f,1f);
-    }
-    public float value { get => mValue; set => mValue = value;}
+    public SenseRandom(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call() =>  Random.Range(-1f,1f);
 }
 
-public class MoveX
+public class MoveX : Neuron
 {
-    private CreatureController mCreature;
-    private WorldController mWorld;
     private Rigidbody2D rigidBody;
-
-    private float mValue = 0F;
 
     public MoveX(CreatureController _creature, WorldController _world)
     {
-        mCreature = _creature;
-        mWorld = _world;
-        rigidBody = mCreature.GetComponent<Rigidbody2D>();
+        creature = _creature;
+        world = _world;
+        rigidBody = creature.GetComponent<Rigidbody2D>();
     }
 
-    public float value { get => mValue; set => mValue = value;}
-    public void call()
+    public override float call()
     {
-        float speed = Mathf.Min(Mathf.Abs(mValue),mCreature.maxSpeed)*Mathf.Sign(mValue);
+        float speed = Mathf.Min(Mathf.Abs(value),creature.maxSpeed)*Mathf.Sign(value);
         rigidBody.velocity = new Vector2(speed,rigidBody.velocity.y);
-    }
-
-    public void input(float value)
-    {
-        mValue = value;
+        return 0f;
     }
 }
 
-public class MoveY
+public class MoveY : Neuron
 {
-    private CreatureController mCreature;
-    private WorldController mWorld;
     private Rigidbody2D rigidBody;
-
-    private float mValue = 0F;
 
     public MoveY(CreatureController _creature, WorldController _world)
     {
-        mCreature = _creature;
-        mWorld = _world;
-        rigidBody = mCreature.GetComponent<Rigidbody2D>();
+        creature = _creature;
+        world = _world;
+        rigidBody = creature.GetComponent<Rigidbody2D>();
     }
 
-    public float value { get => mValue; set => mValue = value;}
-    public void call()
+    public override float call()
     {
-        float speed = Mathf.Min(Mathf.Abs(mValue),mCreature.maxSpeed)*Mathf.Sign(mValue);
+        float speed = Mathf.Min(Mathf.Abs(value),creature.maxSpeed)*Mathf.Sign(value);
         rigidBody.velocity = new Vector2(rigidBody.velocity.x,speed);
-    }
-
-    public void input(float value)
-    {
-        mValue = value;
+        return 0f;
     }
 }

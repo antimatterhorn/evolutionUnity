@@ -52,9 +52,9 @@ public class CreatureController : MonoBehaviour
         AddNeuron(Rnd,"03");  
         numSensors = 4;
 
-        InternalNeuron in1 = new InternalNeuron(this,worldController);
+        Neuron in1 = new Neuron(this,worldController);
         AddNeuron(in1,"10");
-        InternalNeuron in2 = new InternalNeuron(this,worldController);
+        Neuron in2 = new Neuron(this,worldController);
         AddNeuron(in2, "11");
         numInternals = 2;
 

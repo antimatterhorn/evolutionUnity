@@ -13,14 +13,15 @@ public class WorldController : MonoBehaviour
     public float ymax;
     public float epoch;
     
-    private float startTime;
+    public float startTime;
+
 
     // Start is called before the first frame update
     void Start()
     {
         startTime = Time.time;
-        List<GameObject> newCreatures = new List<GameObject>();
-        PopulateZoo(newCreatures);
+        List<Genome> newGenomes = new List<Genome>();
+        PopulateZoo(newGenomes);
     }
 
     // Update is called once per frame
@@ -29,19 +30,27 @@ public class WorldController : MonoBehaviour
         if((Time.time-startTime) > epoch)
         {
             Debug.Log("epoch limit reached");
-            List<GameObject> newCreatures = new List<GameObject>();
+            List<Genome> newGenomes = new List<Genome>();
             startTime = Time.time;
             for(int i=0;i<creatureCollection.transform.childCount;i++)
             {
                 // condittional survival goes here
-                Destroy(creatureCollection.transform.GetChild(i).gameObject);
+                GameObject thisCreature = creatureCollection.transform.GetChild(i).gameObject;
+                if(thisCreature.transform.position.x>6)
+                {
+                    Genome thisGenome = thisCreature.GetComponent<CreatureController>().Genome;
+                    newGenomes.Add(thisGenome);
+                }
+
+                Destroy(thisCreature);
             }
-            PopulateZoo(newCreatures);
+            Debug.Log(newGenomes.Count);
+            PopulateZoo(newGenomes);
         }
             
     }
 
-    void PopulateZoo(List<GameObject> creatures)
+    void PopulateZoo(List<Genome> genomes)
     {
         
         for(int i=0;i<numCreatures;i++)
@@ -53,7 +62,10 @@ public class WorldController : MonoBehaviour
             newCreature.GetComponent<CreatureController>().world = this.gameObject;
             newCreature.transform.parent = creatureCollection.transform;
             newCreature.transform.localScale = new Vector3(0.5f,0.5f,1.0f);
+            if(genomes.Count>0)
+            {
 
+            }
         }
     }
 }
