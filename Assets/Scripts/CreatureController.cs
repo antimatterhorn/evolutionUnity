@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using UnityEngine.UI;
 
 public class CreatureController : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class CreatureController : MonoBehaviour
     
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rigidBody;
+
+    private bool play = true;
+    private Vector2 storedVelocity;
     
 
     void Awake()
@@ -33,15 +37,14 @@ public class CreatureController : MonoBehaviour
         myGenome = new Genome(numGenes);
         rigidBody = GetComponent<Rigidbody2D>();
         myNeurons = new Dictionary<string, dynamic>();
+
+        myGenome.Randomize();
+        spriteRenderer.color = myGenome.Color();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        myGenome.Randomize();
-        
-        spriteRenderer.color = myGenome.Color();
-        
         SensePosX Pox = new SensePosX(this,worldController);
         AddNeuron(Pox,"00");
         SensePosY Poy = new SensePosY(this,worldController);
@@ -66,7 +69,7 @@ public class CreatureController : MonoBehaviour
         
         myBrain = Brain();
 
-        
+        //Debug.Log(myGenome.ToString());
     
         /*
         foreach ((string,string,float) dendrite in myBrain)
@@ -79,26 +82,53 @@ public class CreatureController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        spriteRenderer.color = myGenome.Color();
         rigidBody.rotation = 0f;
         rigidBody.angularVelocity = 0f;
-        myAge += Time.deltaTime;
-
-        // reset all neuron values to zero
+        
         foreach (KeyValuePair<string,dynamic> neuron in myNeurons)
         {         
             neuron.Value.value = 0;
         }
-        // send dendrites to all neurons
-        foreach ((string,string,float) dendrite in myBrain)
+
+        if(play)
         {
-            myNeurons[dendrite.Item2].value += myNeurons[dendrite.Item1].call()*dendrite.Item3;
+            myAge += Time.deltaTime;
+            // send dendrites to all neurons
+            foreach ((string,string,float) dendrite in myBrain)
+            {
+                myNeurons[dendrite.Item2].value += myNeurons[dendrite.Item1].call()*dendrite.Item3;
+            }
+            // fire motor neurons
+            foreach (KeyValuePair<string,dynamic> neuron in myNeurons)
+            {
+                if(neuron.Key[0]=="2"[0])
+                    neuron.Value.call();
+            }
         }
-        // fire motor neurons
-        foreach (KeyValuePair<string,dynamic> neuron in myNeurons)
+    }
+
+
+    public void PauseUnPause()
+    {
+        if(play)
         {
-            if(neuron.Key[0]=="2"[0])
-                neuron.Value.call();
+            storedVelocity = rigidBody.velocity;
+            rigidBody.velocity = new Vector2(0f,0f);
+            rigidBody.isKinematic = true;
         }
+        else
+        {
+            rigidBody.isKinematic = false;
+            rigidBody.velocity = storedVelocity;
+        }       
+        play = !play;
+    }
+
+    void OnMouseDown()
+    {
+        //world.GetComponent<WorldController>().BrainText.GetComponent<Text>().text = myGenome.ToString();
+        
     }
 
     private void AddNeuron(dynamic _neuron, string _id)

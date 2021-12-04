@@ -74,7 +74,7 @@ public class Genome
         return str;
     }
 
-    public void Mutate(int n)
+    public void Mutate(int n=1)
     {
         for(int k=0;k<n;k++)
         {
@@ -88,5 +88,21 @@ public class Genome
             Genes[g] = newGene;
         }
     }
-        
+
+    public override string ToString()
+    {
+        string geneString = "";
+        foreach (string gene in Genes)
+        {
+            geneString += gene + "\n";
+        }
+        return geneString;
+    }
+    public void Clone(Genome parent)
+    {
+        for(int i=0;i<NumGenes;i++)
+        {
+            Genes[i] = parent.Genes[i].ToString();
+        }
+    }  
 }
