@@ -16,6 +16,7 @@ public class WorldController : MonoBehaviour
     public float startTime;
 
     private bool play= true;
+    private Vector2 breedCorner1, breedCorner2;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,8 @@ public class WorldController : MonoBehaviour
         startTime = Time.time;
         List<Genome> newGenomes = new List<Genome>();
         PopulateZoo(newGenomes);
+        breedCorner1 = new Vector2(xmax*0.8f,ymax);
+        breedCorner2 = new Vector2(xmax,ymin);
     }
 
     // Update is called once per frame
@@ -40,7 +43,14 @@ public class WorldController : MonoBehaviour
             {
                 // condittional survival goes here
                 GameObject thisCreature = creatureCollection.transform.GetChild(i).gameObject;
-                if(thisCreature.transform.position.x > 6)
+                Vector2 creaturePos = new Vector2(thisCreature.transform.position.x,thisCreature.transform.position.y);
+                float xSign = Mathf.Sign(breedCorner1.x - creaturePos.x);
+                float ySign = Mathf.Sign(breedCorner1.y - creaturePos.y);
+                
+                Vector2 dist1 = breedCorner1 - creaturePos;
+                Vector2 dist2 = breedCorner1 - breedCorner2;
+
+                if(dist1.x*xSign < dist2.x*xSign && dist1.y*ySign < dist2.y*ySign)
                 {
                     Genome thisGenome = thisCreature.GetComponent<CreatureController>().Genome;
                     newGenomes.Add(thisGenome);
@@ -62,6 +72,12 @@ public class WorldController : MonoBehaviour
         }
     }
     
+    public void SetBreedCorners(Vector2 position1, Vector2 position2)
+    {
+        breedCorner1 = position1;
+        breedCorner2 = position2;
+    }
+
     public void SliderUpdate(float value)
     {
         epoch = value;
