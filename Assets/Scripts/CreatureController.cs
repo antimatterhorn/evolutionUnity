@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.UI;
 
 public class CreatureController : MonoBehaviour
 {
@@ -28,8 +27,9 @@ public class CreatureController : MonoBehaviour
 
     private bool play = true;
     private Vector2 storedVelocity;
-    
 
+    private Dictionary<string,string> neuronDict;
+    
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -40,46 +40,14 @@ public class CreatureController : MonoBehaviour
 
         myGenome.Randomize();
         spriteRenderer.color = myGenome.Color();
+        neuronDict = new Dictionary<string, string>();
     }
 
-    // Start is called before the first frame update
     void Start()
-    {
-        SensePosX Pox = new SensePosX(this,worldController);
-        AddNeuron(Pox,"00");
-        SensePosY Poy = new SensePosY(this,worldController);
-        AddNeuron(Poy,"01");
-        SenseAge Sa = new SenseAge(this,worldController);
-        AddNeuron(Sa,"02");
-        SenseRandom Rnd = new SenseRandom(this,worldController);
-        AddNeuron(Rnd,"03");  
-        numSensors = 4;
-
-        Neuron in1 = new Neuron(this,worldController);
-        AddNeuron(in1,"10");
-        Neuron in2 = new Neuron(this,worldController);
-        AddNeuron(in2, "11");
-        numInternals = 2;
-
-        MoveX Mvx = new MoveX(this,worldController);
-        AddNeuron(Mvx, "20");
-        MoveY Mvy = new MoveY(this,worldController);
-        AddNeuron(Mvy, "21");
-        numMotors = 2;
-        
-        myBrain = Brain();
-
-        //Debug.Log(myGenome.ToString());
-    
-        /*
-        foreach ((string,string,float) dendrite in myBrain)
-        {
-            Debug.Log(dendrite.Item1+"->"+dendrite.Item2+": "+dendrite.Item3.ToString());
-        }
-        */
+    {   
+        myBrain = PopulateBrain();
     }
 
-    // Update is called once per frame
     void Update()
     {
         spriteRenderer.color = myGenome.Color();
@@ -108,7 +76,6 @@ public class CreatureController : MonoBehaviour
         }
     }
 
-
     public void PauseUnPause()
     {
         if(play)
@@ -127,7 +94,7 @@ public class CreatureController : MonoBehaviour
 
     void OnMouseDown()
     {
-        //world.GetComponent<WorldController>().BrainText.GetComponent<Text>().text = myGenome.ToString();
+        Debug.Log(BrainDump());
         
     }
 
@@ -136,7 +103,42 @@ public class CreatureController : MonoBehaviour
         myNeurons.Add(_id, _neuron);
     }
 
-    private (string,string,float)[] Brain()
+    public (string,string,float)[] PopulateBrain()
+    {
+        SensePosX Pox = new SensePosX(this,worldController);
+        AddNeuron(Pox,"00");
+        neuronDict.Add("00","Pox");
+        SensePosY Poy = new SensePosY(this,worldController);
+        AddNeuron(Poy,"01");
+        neuronDict.Add("01","Poy");
+        SenseAge Sa = new SenseAge(this,worldController);
+        AddNeuron(Sa,"02");
+        neuronDict.Add("02","Age");
+        SenseRandom Rnd = new SenseRandom(this,worldController);
+        AddNeuron(Rnd,"03");
+        neuronDict.Add("03","Rnd");
+        numSensors = 4;
+
+        Neuron in1 = new Neuron(this,worldController);
+        AddNeuron(in1,"10");
+        neuronDict.Add("10","N0");
+        Neuron in2 = new Neuron(this,worldController);
+        AddNeuron(in2, "11");
+        neuronDict.Add("11","N1");
+        numInternals = 2;
+
+        MoveX Mvx = new MoveX(this,worldController);
+        AddNeuron(Mvx, "20");
+        neuronDict.Add("20","Mvx");
+        MoveY Mvy = new MoveY(this,worldController);
+        AddNeuron(Mvy, "21");
+        neuronDict.Add("21","Mvy");
+        numMotors = 2;
+
+        return Brain();
+    }
+
+    public (string,string,float)[] Brain()
     {
         (string,string,float)[] brainMap = new (string,string,float)[numGenes];
         int i = 0;
@@ -160,6 +162,17 @@ public class CreatureController : MonoBehaviour
             i++;
         }
         return brainMap;
+    }
+
+    private string BrainDump()
+    {
+        (string,string,float)[] brainMap = Brain();
+        string output = "";
+        foreach ((string, string, float) wire in brainMap)
+        {
+            output += neuronDict[wire.Item1]+" "+neuronDict[wire.Item2]+" "+wire.Item3.ToString()+"\n";
+        }
+        return output;
     }
 
     public float Age { get => myAge; set => myAge = value; }

@@ -23,21 +23,27 @@ public class DrawController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            lineRend.positionCount = 4;
-            initialMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            lineRend.SetPosition(0, new Vector2(initialMousePosition.x,initialMousePosition.y));
-            lineRend.SetPosition(1, new Vector2(initialMousePosition.x,initialMousePosition.y));
-            lineRend.SetPosition(2, new Vector2(initialMousePosition.x,initialMousePosition.y));
-            lineRend.SetPosition(3, new Vector2(initialMousePosition.x,initialMousePosition.y));
+            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x>worldController.xmin)
+            {
+                lineRend.positionCount = 4;
+                initialMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                lineRend.SetPosition(0, new Vector2(initialMousePosition.x,initialMousePosition.y));
+                lineRend.SetPosition(1, new Vector2(initialMousePosition.x,initialMousePosition.y));
+                lineRend.SetPosition(2, new Vector2(initialMousePosition.x,initialMousePosition.y));
+                lineRend.SetPosition(3, new Vector2(initialMousePosition.x,initialMousePosition.y));
+            }      
         }
         if (Input.GetMouseButton(0))
         {
-            currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            lineRend.SetPosition(0, new Vector2(initialMousePosition.x,initialMousePosition.y));
-            lineRend.SetPosition(1, new Vector2(initialMousePosition.x,currentMousePosition.y));
-            lineRend.SetPosition(2, new Vector2(currentMousePosition.x,currentMousePosition.y));
-            lineRend.SetPosition(3, new Vector2(currentMousePosition.x,initialMousePosition.y));
-            worldController.SetBreedCorners(initialMousePosition,currentMousePosition);
+            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x>worldController.xmin)
+            {
+                currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                lineRend.SetPosition(0, new Vector2(initialMousePosition.x,initialMousePosition.y));
+                lineRend.SetPosition(1, new Vector2(initialMousePosition.x,currentMousePosition.y));
+                lineRend.SetPosition(2, new Vector2(currentMousePosition.x,currentMousePosition.y));
+                lineRend.SetPosition(3, new Vector2(currentMousePosition.x,initialMousePosition.y));
+                worldController.SetBreedCorners(initialMousePosition,currentMousePosition);
+            }
         }
     }
 }

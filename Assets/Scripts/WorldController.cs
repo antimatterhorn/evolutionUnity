@@ -24,7 +24,7 @@ public class WorldController : MonoBehaviour
         startTime = Time.time;
         List<Genome> newGenomes = new List<Genome>();
         PopulateZoo(newGenomes);
-        breedCorner1 = new Vector2(xmax*0.8f,ymax);
+        breedCorner1 = new Vector2(xmin,ymax);
         breedCorner2 = new Vector2(xmax,ymin);
     }
 
