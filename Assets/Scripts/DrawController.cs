@@ -23,21 +23,25 @@ public class DrawController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x>worldController.xmin)
+            if(worldController.play && worldController.InWorld(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
             {
                 lineRend.positionCount = 4;
                 initialMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                initialMousePosition.x = Mathf.Min(Mathf.Max(initialMousePosition.x,worldController.xmin),worldController.xmax);
+                initialMousePosition.y = Mathf.Min(Mathf.Max(initialMousePosition.y,worldController.ymin),worldController.ymax);
                 lineRend.SetPosition(0, new Vector2(initialMousePosition.x,initialMousePosition.y));
                 lineRend.SetPosition(1, new Vector2(initialMousePosition.x,initialMousePosition.y));
                 lineRend.SetPosition(2, new Vector2(initialMousePosition.x,initialMousePosition.y));
                 lineRend.SetPosition(3, new Vector2(initialMousePosition.x,initialMousePosition.y));
-            }      
+            }
         }
         if (Input.GetMouseButton(0))
         {
-            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x>worldController.xmin)
+            if(worldController.play && worldController.InWorld(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
             {
                 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                currentMousePosition.x = Mathf.Min(Mathf.Max(currentMousePosition.x,worldController.xmin),worldController.xmax);
+                currentMousePosition.y = Mathf.Min(Mathf.Max(currentMousePosition.y,worldController.ymin),worldController.ymax);
                 lineRend.SetPosition(0, new Vector2(initialMousePosition.x,initialMousePosition.y));
                 lineRend.SetPosition(1, new Vector2(initialMousePosition.x,currentMousePosition.y));
                 lineRend.SetPosition(2, new Vector2(currentMousePosition.x,currentMousePosition.y));

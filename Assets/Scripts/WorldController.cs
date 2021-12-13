@@ -15,7 +15,7 @@ public class WorldController : MonoBehaviour
     public float epoch;
     public float startTime;
 
-    private bool play= true;
+    public bool play= true;
     private Vector2 breedCorner1, breedCorner2;
 
     // Start is called before the first frame update
@@ -107,5 +107,13 @@ public class WorldController : MonoBehaviour
                 }    
             }
         }
+    }
+
+    public bool InWorld(Vector2 position)
+    {
+        if(position.x < xmax && position.x > xmin && position.y < ymax && position.y > ymin)
+            return true;
+        else
+            return false;
     }
 }

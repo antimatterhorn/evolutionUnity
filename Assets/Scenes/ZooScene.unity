@@ -343,6 +343,7 @@ MonoBehaviour:
   ymax: 5.5
   epoch: 10
   startTime: 0
+  play: 1
 --- !u!4 &350890352
 Transform:
   m_ObjectHideFlags: 0

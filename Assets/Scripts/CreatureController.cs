@@ -94,7 +94,12 @@ public class CreatureController : MonoBehaviour
 
     void OnMouseDown()
     {
-        Debug.Log(BrainDump());
+        if(!play)
+        {
+            TextWriter tw = new TextWriter();
+            tw.WriteString(BrainDump(),"brain.txt");
+            //Debug.Log(BrainDump());
+        }
         
     }
 
