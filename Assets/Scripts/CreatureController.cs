@@ -5,7 +5,7 @@ using UnityEngine;
 public class CreatureController : MonoBehaviour
 {
     public GameObject world;
-    [SerializeField] int numGenes=8;
+    [SerializeField] int numGenes=12;
     public float maxSpeed=3.0f;
 
     public Genome myGenome;
@@ -130,7 +130,10 @@ public class CreatureController : MonoBehaviour
         Neuron in2 = new Neuron(this,worldController);
         AddNeuron(in2, "11");
         neuronDict.Add("11","N1");
-        numInternals = 2;
+        Oscillator Osc = new Oscillator(this,worldController);
+        AddNeuron(Osc,"12");
+        neuronDict.Add("12","Osc");
+        numInternals = 3;
 
         MoveX Mvx = new MoveX(this,worldController);
         AddNeuron(Mvx, "20");

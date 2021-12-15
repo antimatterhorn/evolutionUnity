@@ -22,6 +22,12 @@ public class Neuron
  * SENSORY NEURONS
  * ********************************/
  /* Sensory neurons return values between -1 and 1 */
+public class Oscillator : Neuron
+{
+    public Oscillator(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call() => Mathf.Sin(value*Time.time);
+}
+
 public class SenseAlive : Neuron
 {
     public SenseAlive(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
