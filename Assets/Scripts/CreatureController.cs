@@ -5,7 +5,7 @@ using UnityEngine;
 public class CreatureController : MonoBehaviour
 {
     public GameObject world;
-    [SerializeField] int numGenes=12;
+    public int numGenes=12;
     public float maxSpeed=3.0f;
 
     public Genome myGenome;
@@ -103,44 +103,34 @@ public class CreatureController : MonoBehaviour
         
     }
 
-    private void AddNeuron(dynamic _neuron, string _id)
+    private void AddNeuron(dynamic _neuron, string _id, string _name)
     {
         myNeurons.Add(_id, _neuron);
+        neuronDict.Add(_id,_name);
     }
 
     public (string,string,float)[] PopulateBrain()
     {
         SensePosX Pox = new SensePosX(this,worldController);
-        AddNeuron(Pox,"00");
-        neuronDict.Add("00","Pox");
+        AddNeuron(Pox,"00","Pox");
         SensePosY Poy = new SensePosY(this,worldController);
-        AddNeuron(Poy,"01");
-        neuronDict.Add("01","Poy");
+        AddNeuron(Poy,"01","Poy");
         SenseAge Sa = new SenseAge(this,worldController);
-        AddNeuron(Sa,"02");
-        neuronDict.Add("02","Age");
+        AddNeuron(Sa,"02","Age");
         SenseRandom Rnd = new SenseRandom(this,worldController);
-        AddNeuron(Rnd,"03");
-        neuronDict.Add("03","Rnd");
+        AddNeuron(Rnd,"03","Rnd");
         numSensors = 4;
 
         Neuron in1 = new Neuron(this,worldController);
-        AddNeuron(in1,"10");
-        neuronDict.Add("10","N0");
+        AddNeuron(in1,"10","N0");
         Neuron in2 = new Neuron(this,worldController);
-        AddNeuron(in2, "11");
-        neuronDict.Add("11","N1");
-        Oscillator Osc = new Oscillator(this,worldController);
-        AddNeuron(Osc,"12");
-        neuronDict.Add("12","Osc");
-        numInternals = 3;
+        AddNeuron(in2, "11","N1");
+        numInternals = 2; 
 
         MoveX Mvx = new MoveX(this,worldController);
-        AddNeuron(Mvx, "20");
-        neuronDict.Add("20","Mvx");
+        AddNeuron(Mvx, "20","Mvx");
         MoveY Mvy = new MoveY(this,worldController);
-        AddNeuron(Mvy, "21");
-        neuronDict.Add("21","Mvy");
+        AddNeuron(Mvy, "21","Mvy");
         numMotors = 2;
 
         return Brain();

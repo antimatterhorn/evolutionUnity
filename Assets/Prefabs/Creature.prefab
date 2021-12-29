@@ -145,5 +145,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   world: {fileID: 0}
-  numGenes: 12
+  numGenes: 8
   maxSpeed: 3

@@ -55,7 +55,23 @@ public class SensePosY : Neuron
 public class SenseRandom : Neuron
 {
     public SenseRandom(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
-    public override float call() =>  Random.Range(-1f,1f);
+    public override float call() => Random.Range(-1f,1f);
+}
+
+public class SenseSpeed : Neuron
+{
+    public SenseSpeed(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call() => rigidBody.velocity.magnitude/(creature.maxSpeed*Mathf.Sqrt(2));
+}
+
+public class SenseStuck : Neuron
+{
+    public SenseStuck(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call()
+    {
+        float stuck = 1f-rigidBody.velocity.magnitude/(creature.maxSpeed*Mathf.Sqrt(2));
+        return (stuck > 0.9f ? 1f : 0);
+    }
 }
 /* ********************************
  * MOTOR NEURONS
