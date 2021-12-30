@@ -6,8 +6,11 @@ public class WorldController : MonoBehaviour
 {
     public GameObject creatureCollection;
     public GameObject creaturePrefab;
+    public GameObject foodCollection;
+    public GameObject foodPrefab;
     public float mutationRate;
     public int numCreatures;
+    public int numFood;
     public float xmin;
     public float xmax;
     public float ymin;
@@ -24,6 +27,7 @@ public class WorldController : MonoBehaviour
         startTime = Time.time;
         List<Genome> newGenomes = new List<Genome>();
         PopulateZoo(newGenomes);
+        PopulateFood();
         breedCorner1 = new Vector2(xmin,ymax);
         breedCorner2 = new Vector2(xmax,ymin);
     }
@@ -59,6 +63,7 @@ public class WorldController : MonoBehaviour
             }
             Debug.Log(newGenomes.Count);
             PopulateZoo(newGenomes);
+            PopulateFood();
         }            
     }
 
@@ -92,8 +97,9 @@ public class WorldController : MonoBehaviour
             Vector2 newPos = new Vector2(xpos,ypos);
             GameObject newCreature = (GameObject)Instantiate(creaturePrefab,newPos,Quaternion.identity);
             newCreature.GetComponent<CreatureController>().world = this.gameObject;
+            newCreature.GetComponent<CircleCollider2D>().radius = 4f;
             newCreature.transform.parent = creatureCollection.transform;
-            newCreature.transform.localScale = new Vector3(0.5f,0.5f,1.0f);
+            newCreature.transform.localScale = new Vector3(0.4f,0.4f,1.0f);
             if(genomes.Count>0)
             {
                 Genome parent = genomes[i%genomes.Count];
@@ -106,6 +112,18 @@ public class WorldController : MonoBehaviour
                         child.Mutate();
                 }    
             }
+        }
+    }
+
+    void PopulateFood()
+    { 
+        for(int i=0;i<numFood;i++)
+        {
+            float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
+            float ypos = Random.Range(ymin*0.9f,ymax*0.9f);
+            Vector2 newPos = new Vector2(xpos,ypos);
+            GameObject newFood = (GameObject)Instantiate(foodPrefab,newPos,Quaternion.identity);
+            newFood.transform.parent = foodCollection.transform;
         }
     }
 

@@ -51,8 +51,8 @@ public class CreatureController : MonoBehaviour
     void Update()
     {
         spriteRenderer.color = myGenome.Color();
-        rigidBody.rotation = 0f;
-        rigidBody.angularVelocity = 0f;
+        //rigidBody.rotation = 0f;
+        //rigidBody.angularVelocity = 0f;
         
         foreach (KeyValuePair<string,dynamic> neuron in myNeurons)
         {         
