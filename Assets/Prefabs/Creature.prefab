@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2125159067052906667}
   - component: {fileID: 2125159067052906666}
   - component: {fileID: 2125159067052906670}
-  - component: {fileID: 330541858101278049}
   m_Layer: 0
   m_Name: Creature
   m_TagString: Creature
@@ -146,21 +145,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   world: {fileID: 0}
-  numGenes: 8
+  numGenes: 12
   maxSpeed: 3
---- !u!58 &330541858101278049
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2125159067052906665}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 2

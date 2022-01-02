@@ -102,7 +102,21 @@ public class CreatureController : MonoBehaviour
         }
         
     }
-
+/*
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        //Debug.Log(other);
+        if(other.gameObject.CompareTag("Food"))
+        {
+            Vector3 foodPos = other.gameObject.transform.position;
+            Vector3 thisPos = this.gameObject.transform.position;
+            float d1 = (thisPos - foodPos).magnitude;
+            float d2 = (thisPos - closestFood).magnitude;
+            if(d1 < d2)
+                closestFood = foodPos;
+        }
+    }
+*/
     private void AddNeuron(dynamic _neuron, string _id, string _name)
     {
         myNeurons.Add(_id, _neuron);
@@ -119,7 +133,13 @@ public class CreatureController : MonoBehaviour
         AddNeuron(Sa,"02","Age");
         SenseRandom Rnd = new SenseRandom(this,worldController);
         AddNeuron(Rnd,"03","Rnd");
-        numSensors = 4;
+        SenseFed SFd = new SenseFed(this,worldController);
+        AddNeuron(SFd,"04","SFd");
+        SenseFoodX SFx = new SenseFoodX(this,worldController);
+        AddNeuron(SFx,"05","SFx");
+        SenseFoodY SFy = new SenseFoodY(this,worldController);
+        AddNeuron(SFy,"06","SFy");
+        numSensors = 7;
 
         Neuron in1 = new Neuron(this,worldController);
         AddNeuron(in1,"10","N0");

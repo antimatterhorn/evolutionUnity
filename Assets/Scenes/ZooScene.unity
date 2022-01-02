@@ -339,7 +339,7 @@ MonoBehaviour:
   foodPrefab: {fileID: 5423648679281181916, guid: ce5d5848db5d421408dcdfb554b0117a, type: 3}
   mutationRate: 0.05
   numCreatures: 300
-  numFood: 50
+  numFood: 100
   xmin: -8
   xmax: 8
   ymin: -5.5

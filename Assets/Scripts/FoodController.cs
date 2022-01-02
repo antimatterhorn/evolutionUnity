@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class FoodController : MonoBehaviour
 {
+    public GameObject world;
+    private WorldController wc;
+    
     // Start is called before the first frame update
     void Start()
     {
-        
+        world = GameObject.FindGameObjectWithTag("GameController");
+        wc = world.GetComponent<WorldController>();
     }
 
     // Update is called once per frame
@@ -22,7 +26,7 @@ public class FoodController : MonoBehaviour
         if(other.gameObject.CompareTag("Creature") && other.GetType() == typeof(BoxCollider2D))
         {
             other.GetComponentInParent<CreatureController>().Food += 1f;
-            Debug.Log("eaten");
+            wc.foodTree.Remove(this.gameObject.transform);
             Destroy(this.gameObject);
         }
     }

@@ -8,6 +8,7 @@ public class Neuron
     public CreatureController creature { get;set;}
     public WorldController world {get;set;}
     public Rigidbody2D rigidBody {get;set;}
+    public KdTree<Transform> foodTree {get;set;}
 
     public Neuron(){}
     public Neuron(CreatureController _creature, WorldController _world)
@@ -15,6 +16,7 @@ public class Neuron
         creature = _creature;
         world = _world;
         rigidBody = creature.GetComponent<Rigidbody2D>();
+        foodTree = _world.foodTree;
     }
     public virtual float call()  => (float)System.Math.Tanh((double)value);
 }
@@ -71,6 +73,42 @@ public class SenseStuck : Neuron
     {
         float stuck = 1f-rigidBody.velocity.magnitude/(creature.maxSpeed*Mathf.Sqrt(2));
         return (stuck > 0.9f ? 1f : 0);
+    }
+}
+
+public class SenseFed : Neuron
+{
+    public SenseFed(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call() => Mathf.Max(creature.Food,1f);
+}
+
+public class SenseFoodX : Neuron
+{
+    public SenseFoodX(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call()
+    {
+        if(foodTree.ToList().Count > 0)
+        {
+            Vector3 closeFood = foodTree.FindClosest(creature.transform.position).position;
+            Vector3 direction = (creature.transform.position - closeFood).normalized;
+            return direction.x;
+        }
+        else return 0f;
+    }
+}
+
+public class SenseFoodY : Neuron
+{
+    public SenseFoodY(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call()
+    {
+        if(foodTree.ToList().Count > 0)
+        {
+            Vector3 closeFood = foodTree.FindClosest(creature.transform.position).position;
+            Vector3 direction = (creature.transform.position - closeFood).normalized;
+            return direction.y;
+        }
+        else return 0f;
     }
 }
 /* ********************************

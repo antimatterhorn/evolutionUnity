@@ -21,6 +21,8 @@ public class WorldController : MonoBehaviour
     public bool play= true;
     private Vector2 breedCorner1, breedCorner2;
 
+    public KdTree<Transform> foodTree = new KdTree<Transform>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,10 +56,13 @@ public class WorldController : MonoBehaviour
                 Vector2 dist1 = breedCorner1 - creaturePos;
                 Vector2 dist2 = breedCorner1 - breedCorner2;
 
-                if(dist1.x*xSign < dist2.x*xSign && dist1.y*ySign < dist2.y*ySign)
+                if((dist1.x*xSign < dist2.x*xSign && dist1.y*ySign < dist2.y*ySign) && thisCreature.GetComponent<CreatureController>().Food > 0)
                 {
                     Genome thisGenome = thisCreature.GetComponent<CreatureController>().Genome;
-                    newGenomes.Add(thisGenome);
+                    for (int j = 0; j < thisCreature.GetComponent<CreatureController>().Food; j++)
+                    {
+                        newGenomes.Add(thisGenome);
+                    }                 
                 }
                 Destroy(thisCreature);
             }
@@ -97,7 +102,7 @@ public class WorldController : MonoBehaviour
             Vector2 newPos = new Vector2(xpos,ypos);
             GameObject newCreature = (GameObject)Instantiate(creaturePrefab,newPos,Quaternion.identity);
             newCreature.GetComponent<CreatureController>().world = this.gameObject;
-            newCreature.GetComponent<CircleCollider2D>().radius = 4f;
+            //newCreature.GetComponent<CircleCollider2D>().radius = 4f;
             newCreature.transform.parent = creatureCollection.transform;
             newCreature.transform.localScale = new Vector3(0.4f,0.4f,1.0f);
             if(genomes.Count>0)
@@ -117,6 +122,7 @@ public class WorldController : MonoBehaviour
 
     void PopulateFood()
     { 
+        foodTree = new KdTree<Transform>();
         for(int i=0;i<numFood;i++)
         {
             float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
@@ -124,6 +130,7 @@ public class WorldController : MonoBehaviour
             Vector2 newPos = new Vector2(xpos,ypos);
             GameObject newFood = (GameObject)Instantiate(foodPrefab,newPos,Quaternion.identity);
             newFood.transform.parent = foodCollection.transform;
+            foodTree.Add(newFood.transform);
         }
     }
 
