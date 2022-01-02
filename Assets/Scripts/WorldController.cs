@@ -30,8 +30,8 @@ public class WorldController : MonoBehaviour
         List<Genome> newGenomes = new List<Genome>();
         PopulateZoo(newGenomes);
         PopulateFood();
-        breedCorner1 = new Vector2(xmin,ymax);
-        breedCorner2 = new Vector2(xmax,ymin);
+        breedCorner1 = new Vector2(xmin/2,ymax/2);
+        breedCorner2 = new Vector2(xmax/2,ymin/2);
     }
 
     // Update is called once per frame
@@ -50,13 +50,8 @@ public class WorldController : MonoBehaviour
                 // condittional survival goes here
                 GameObject thisCreature = creatureCollection.transform.GetChild(i).gameObject;
                 Vector2 creaturePos = new Vector2(thisCreature.transform.position.x,thisCreature.transform.position.y);
-                float xSign = Mathf.Sign(breedCorner1.x - creaturePos.x);
-                float ySign = Mathf.Sign(breedCorner1.y - creaturePos.y);
-                
-                Vector2 dist1 = breedCorner1 - creaturePos;
-                Vector2 dist2 = breedCorner1 - breedCorner2;
 
-                if((dist1.x*xSign < dist2.x*xSign && dist1.y*ySign < dist2.y*ySign) && thisCreature.GetComponent<CreatureController>().Food > 0)
+                if(InBox(creaturePos) && thisCreature.GetComponent<CreatureController>().Food > 0)
                 {
                     Genome thisGenome = thisCreature.GetComponent<CreatureController>().Genome;
                     for (int j = 0; j < thisCreature.GetComponent<CreatureController>().Food; j++)
@@ -137,6 +132,19 @@ public class WorldController : MonoBehaviour
     public bool InWorld(Vector2 position)
     {
         if(position.x < xmax && position.x > xmin && position.y < ymax && position.y > ymin)
+            return true;
+        else
+            return false;
+    }
+
+    public bool InBox(Vector2 position)
+    {
+        float xSign = Mathf.Sign(breedCorner1.x - position.x);
+        float ySign = Mathf.Sign(breedCorner1.y - position.y);
+        Vector2 dist1 = breedCorner1 - position;
+        Vector2 dist2 = breedCorner1 - breedCorner2;
+
+        if((dist1.x*xSign < dist2.x*xSign && dist1.y*ySign < dist2.y*ySign))
             return true;
         else
             return false;

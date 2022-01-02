@@ -6,6 +6,7 @@ public class CreatureController : MonoBehaviour
 {
     public GameObject world;
     public int numGenes=12;
+    
     public float maxSpeed=3.0f;
 
     public Genome myGenome;
@@ -17,7 +18,7 @@ public class CreatureController : MonoBehaviour
     private Vector2 lastPosition;
 
     private int numSensors;
-    private int numInternals;
+    public int numInternals=4;
     private int numMotors;
 
     private WorldController worldController;
@@ -134,18 +135,18 @@ public class CreatureController : MonoBehaviour
         SenseRandom Rnd = new SenseRandom(this,worldController);
         AddNeuron(Rnd,"03","Rnd");
         SenseFed SFd = new SenseFed(this,worldController);
-        AddNeuron(SFd,"04","SFd");
+        AddNeuron(SFd,"04","Fed");
         SenseFoodX SFx = new SenseFoodX(this,worldController);
         AddNeuron(SFx,"05","SFx");
         SenseFoodY SFy = new SenseFoodY(this,worldController);
         AddNeuron(SFy,"06","SFy");
         numSensors = 7;
 
-        Neuron in1 = new Neuron(this,worldController);
-        AddNeuron(in1,"10","N0");
-        Neuron in2 = new Neuron(this,worldController);
-        AddNeuron(in2, "11","N1");
-        numInternals = 2; 
+        for (int i = 0; i < numInternals; i++)
+        {
+            Neuron in1 = new Neuron(this,worldController);
+            AddNeuron(in1,"1"+i.ToString(),"N"+i.ToString());
+        }
 
         MoveX Mvx = new MoveX(this,worldController);
         AddNeuron(Mvx, "20","Mvx");
