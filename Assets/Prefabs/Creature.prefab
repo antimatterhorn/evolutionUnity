@@ -145,5 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   world: {fileID: 0}
-  numGenes: 12
+  creaturePrefab: {fileID: 2125159067052906665}
+  numGenes: 16
   maxSpeed: 3
+  numInternals: 4

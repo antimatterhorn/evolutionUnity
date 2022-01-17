@@ -8,63 +8,71 @@ public class WorldController : MonoBehaviour
     public GameObject creaturePrefab;
     public GameObject foodCollection;
     public GameObject foodPrefab;
+    public GameObject radiationCollection;
+    public GameObject radiationPrefab;
     public float mutationRate;
     public int numCreatures;
-    public int numFood;
+    public float foodRate;
     public float xmin;
     public float xmax;
     public float ymin;
     public float ymax;
     public float epoch;
     public float startTime;
+    public float foodTime;
 
     public bool play= true;
     private Vector2 breedCorner1, breedCorner2;
 
+    public List<GameObject> radiationHazards;
+
     public KdTree<Transform> foodTree = new KdTree<Transform>();
+    public KdTree<Transform> hazardTree = new KdTree<Transform>();
+
+    private float mouseDownTime;
+    private float mouseWait = 1f;
 
     // Start is called before the first frame update
     void Start()
     {
         startTime = Time.time;
         List<Genome> newGenomes = new List<Genome>();
+        foodTree = new KdTree<Transform>();
         PopulateZoo(newGenomes);
         PopulateFood();
         breedCorner1 = new Vector2(xmin/2,ymax/2);
         breedCorner2 = new Vector2(xmax/2,ymin/2);
+
+        mouseDownTime = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
         if(!play)
-            startTime+=Time.deltaTime; // so that the epoch stays the same
-
-        if((Time.time-startTime) > epoch)
         {
-            Debug.Log("epoch limit reached");
-            List<Genome> newGenomes = new List<Genome>();
-            startTime = Time.time;
-            for(int i=0;i<creatureCollection.transform.childCount;i++)
-            {
-                // condittional survival goes here
-                GameObject thisCreature = creatureCollection.transform.GetChild(i).gameObject;
-                Vector2 creaturePos = new Vector2(thisCreature.transform.position.x,thisCreature.transform.position.y);
-
-                if(InBox(creaturePos) && thisCreature.GetComponent<CreatureController>().Food > 0)
-                {
-                    Genome thisGenome = thisCreature.GetComponent<CreatureController>().Genome;
-                    for (int j = 0; j < thisCreature.GetComponent<CreatureController>().Food; j++)
-                    {
-                        newGenomes.Add(thisGenome);
-                    }                 
-                }
-                Destroy(thisCreature);
-            }
-            Debug.Log(newGenomes.Count);
-            PopulateZoo(newGenomes);
+            startTime+=Time.deltaTime; // so that the epoch stays the same \
+            foodTime +=Time.deltaTime;
+        }
+            
+        if((Time.time-foodTime) > 1f/foodRate)
+        {
             PopulateFood();
-        }            
+        }
+        if (Input.GetMouseButtonDown(0) && play && (Time.time - mouseDownTime)>mouseWait)
+        {
+            Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if(InWorld(position))
+            {
+                position.z = 0;
+                GameObject newRadiation = (GameObject)Instantiate(radiationPrefab,position,Quaternion.identity);
+                newRadiation.transform.parent = radiationCollection.transform;
+                mouseDownTime = Time.time;
+                hazardTree.Add(newRadiation.transform);
+                radiationHazards.Add(newRadiation); 
+            }
+
+        }   
     }
 
     public void PauseUnPause()
@@ -116,17 +124,14 @@ public class WorldController : MonoBehaviour
     }
 
     void PopulateFood()
-    { 
-        foodTree = new KdTree<Transform>();
-        for(int i=0;i<numFood;i++)
-        {
-            float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
-            float ypos = Random.Range(ymin*0.9f,ymax*0.9f);
-            Vector2 newPos = new Vector2(xpos,ypos);
-            GameObject newFood = (GameObject)Instantiate(foodPrefab,newPos,Quaternion.identity);
-            newFood.transform.parent = foodCollection.transform;
-            foodTree.Add(newFood.transform);
-        }
+    {         
+        float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
+        float ypos = Random.Range(ymin*0.9f,ymax*0.9f);
+        Vector2 newPos = new Vector2(xpos,ypos);
+        GameObject newFood = (GameObject)Instantiate(foodPrefab,newPos,Quaternion.identity);
+        newFood.transform.parent = foodCollection.transform;
+        foodTree.Add(newFood.transform);
+        foodTime = Time.time;
     }
 
     public bool InWorld(Vector2 position)

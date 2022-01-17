@@ -9,6 +9,7 @@ public class Neuron
     public WorldController world {get;set;}
     public Rigidbody2D rigidBody {get;set;}
     public KdTree<Transform> foodTree {get;set;}
+    public KdTree<Transform> hazardTree {get;set;}
 
     public Neuron(){}
     public Neuron(CreatureController _creature, WorldController _world)
@@ -17,6 +18,7 @@ public class Neuron
         world = _world;
         rigidBody = creature.GetComponent<Rigidbody2D>();
         foodTree = _world.foodTree;
+        hazardTree = _world.hazardTree;
     }
     public virtual float call()  => (float)System.Math.Tanh((double)value);
 }
@@ -90,7 +92,7 @@ public class SenseFoodX : Neuron
         if(foodTree.ToList().Count > 0)
         {
             Vector3 closeFood = foodTree.FindClosest(creature.transform.position).position;
-            Vector3 direction = (creature.transform.position - closeFood).normalized;
+            Vector3 direction = (closeFood - creature.transform.position).normalized;
             return direction.x;
         }
         else return 0f;
@@ -105,10 +107,44 @@ public class SenseFoodY : Neuron
         if(foodTree.ToList().Count > 0)
         {
             Vector3 closeFood = foodTree.FindClosest(creature.transform.position).position;
-            Vector3 direction = (creature.transform.position - closeFood).normalized;
+            Vector3 direction = (closeFood - creature.transform.position).normalized;
             return direction.y;
         }
         else return 0f;
+    }
+}
+
+public class SenseHazardX : Neuron
+{
+    public SenseHazardX(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call()
+    {
+        float str = 0f;
+        if(hazardTree.ToList().Count > 0)
+        {
+            Vector3 closeHazard = hazardTree.FindClosest(creature.transform.position).position;
+            Vector3 direction = (closeHazard - creature.transform.position);
+            if(direction.magnitude <=2f)
+                str = (2f - direction.x)*0.5f;
+        }        
+        return str;
+    }
+}
+
+public class SenseHazardY : Neuron
+{
+    public SenseHazardY(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
+    public override float call()
+    {
+        float str = 0f;
+        if(hazardTree.ToList().Count > 0)
+        {
+            Vector3 closeHazard = hazardTree.FindClosest(creature.transform.position).position;
+            Vector3 direction = (closeHazard - creature.transform.position);
+            if(direction.magnitude <=2f)
+                str = (2f - direction.y)*0.5f;
+        }        
+        return str;
     }
 }
 /* ********************************
@@ -118,21 +154,19 @@ public class SenseFoodY : Neuron
 public class MoveX : Neuron
 {
     public MoveX(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
-    public override float call()
+    public new void call()
     {
         float speed = Mathf.Min(Mathf.Abs(value),creature.maxSpeed)*Mathf.Sign(value);
         rigidBody.velocity = new Vector2(speed,rigidBody.velocity.y);
-        return 0f;
     }
 }
 
 public class MoveY : Neuron
 {
     public MoveY(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
-    public override float call()
+    public new void call()
     {
         float speed = Mathf.Min(Mathf.Abs(value),creature.maxSpeed)*Mathf.Sign(value);
         rigidBody.velocity = new Vector2(rigidBody.velocity.x,speed);
-        return 0f;
     }
 }

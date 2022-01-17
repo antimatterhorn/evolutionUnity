@@ -337,16 +337,20 @@ MonoBehaviour:
   creaturePrefab: {fileID: 2125159067052906665, guid: f01ffddc8b3209e4e9ff35f4a73d2c54, type: 3}
   foodCollection: {fileID: 1684814773}
   foodPrefab: {fileID: 5423648679281181916, guid: ce5d5848db5d421408dcdfb554b0117a, type: 3}
+  radiationCollection: {fileID: 646162414}
+  radiationPrefab: {fileID: 5808050228543928661, guid: c683471929a7cf14ebb9b6ae551b08b4, type: 3}
   mutationRate: 0.05
   numCreatures: 300
-  numFood: 100
+  foodRate: 30
   xmin: -8
   xmax: 8
   ymin: -5.5
   ymax: 5.5
   epoch: 10
   startTime: 0
+  foodTime: 0
   play: 1
+  radiationHazards: []
 --- !u!4 &350890352
 Transform:
   m_ObjectHideFlags: 0
@@ -571,7 +575,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &427299604
 MonoBehaviour:
@@ -781,6 +785,36 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &646162414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 646162415}
+  m_Layer: 0
+  m_Name: RadiationCollection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &646162415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646162414}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.7209359, y: 1.095135, z: -2.9804983}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &692980976
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,7 +1171,7 @@ RectTransform:
   - {fileID: 79501222}
   - {fileID: 382173391}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1528,7 +1562,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1221350032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1652,7 +1686,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1577596951
 GameObject:
@@ -1718,7 +1752,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1977076935
 GameObject:
@@ -1806,7 +1840,7 @@ GameObject:
   - component: {fileID: 2082701701}
   m_Layer: 0
   m_Name: CreatureCollection
-  m_TagString: Untagged
+  m_TagString: CreatureCollection
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1823,5 +1857,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

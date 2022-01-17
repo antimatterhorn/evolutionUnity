@@ -5,6 +5,7 @@ using UnityEngine;
 public class CreatureController : MonoBehaviour
 {
     public GameObject world;
+    public GameObject creaturePrefab;
     public int numGenes=12;
     
     public float maxSpeed=3.0f;
@@ -15,7 +16,8 @@ public class CreatureController : MonoBehaviour
 
     private float myAge = 0f;
     private float myFood;
-    private Vector2 lastPosition;
+    private Vector3 lastPosition;
+    private float distTraveled;
 
     private int numSensors;
     public int numInternals=4;
@@ -30,6 +32,8 @@ public class CreatureController : MonoBehaviour
     private Vector2 storedVelocity;
 
     private Dictionary<string,string> neuronDict;
+
+    private GameObject creatureCollection;
     
     void Awake()
     {
@@ -42,6 +46,7 @@ public class CreatureController : MonoBehaviour
         myGenome.Randomize();
         spriteRenderer.color = myGenome.Color();
         neuronDict = new Dictionary<string, string>();
+        creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
     }
 
     void Start()
@@ -51,6 +56,7 @@ public class CreatureController : MonoBehaviour
 
     void Update()
     {
+        distTraveled += (this.transform.position - lastPosition).magnitude;
         spriteRenderer.color = myGenome.Color();
         //rigidBody.rotation = 0f;
         //rigidBody.angularVelocity = 0f;
@@ -74,6 +80,59 @@ public class CreatureController : MonoBehaviour
                 if(neuron.Key[0]=="2"[0])
                     neuron.Value.call();
             }
+
+            if(worldController.radiationHazards.Count > 0)
+            {
+                foreach (GameObject hazard in worldController.radiationHazards)
+                {
+                    Vector3 hpos = hazard.transform.position;
+                    float dist = (this.transform.position - hpos).magnitude;
+                    if(dist<2f)
+                    {
+                        float a = 10f;
+                        float b = -0.5f*Mathf.Log(1f/a,Mathf.Exp(1f));
+                        float fac = a*Mathf.Exp(-b*dist);
+                        myAge += Time.deltaTime*fac;
+                    }
+                }
+            }
+
+            if(myAge > worldController.epoch)
+            //if((myAge > world.GetComponent<WorldController>().epoch) || (distTraveled > 2f*(world.GetComponent<WorldController>().xmax-world.GetComponent<WorldController>().xmin)))
+            {
+                Destroy(this.gameObject);
+            }
+        }
+        lastPosition = this.transform.position;
+    }
+
+    public void Reproduce()
+    {
+        float xmin = worldController.xmin;
+        float ymin = worldController.ymin;
+        float xmax = worldController.xmax;
+        float ymax = worldController.ymax;
+
+        /*
+        float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
+        float ypos = Random.Range(ymin*0.9f,ymax*0.9f);
+        */
+        float xpos = this.transform.position.x + Random.Range(-0.05f,0.05f);
+        float ypos = this.transform.position.y + Random.Range(-0.05f,0.05f);
+        Vector2 newPos = new Vector2(xpos,ypos);
+        GameObject newCreature = (GameObject)Instantiate(creaturePrefab,newPos,Quaternion.identity);
+        newCreature.GetComponent<CreatureController>().world = world;
+        //newCreature.GetComponent<CircleCollider2D>().radius = 4f;
+        newCreature.transform.parent = creatureCollection.transform;
+        newCreature.transform.localScale = new Vector3(0.4f,0.4f,1.0f);
+
+        Genome child = newCreature.GetComponent<CreatureController>().Genome;
+        child.Clone(myGenome);
+        for(int j=0;j<child.Genes.Count;j++)
+        {
+            float m = Random.value;
+            if(m<=worldController.mutationRate)
+                child.Mutate();
         }
     }
 
@@ -93,7 +152,7 @@ public class CreatureController : MonoBehaviour
         play = !play;
     }
 
-    void OnMouseDown()
+    public void OnMouseDown()
     {
         if(!play)
         {
@@ -140,7 +199,13 @@ public class CreatureController : MonoBehaviour
         AddNeuron(SFx,"05","SFx");
         SenseFoodY SFy = new SenseFoodY(this,worldController);
         AddNeuron(SFy,"06","SFy");
-        numSensors = 7;
+        SenseHazardX SHx = new SenseHazardX(this,worldController);
+        AddNeuron(SHx,"07","SHx");
+        SenseHazardY SHy = new SenseHazardY(this,worldController);
+        AddNeuron(SHy,"08","SHy");
+        SenseAlive SAl = new SenseAlive(this,worldController);
+        AddNeuron(SAl,"09","SAl");
+        numSensors = 10;
 
         for (int i = 0; i < numInternals; i++)
         {

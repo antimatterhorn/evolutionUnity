@@ -25,7 +25,7 @@ public class FoodController : MonoBehaviour
         //Debug.Log(other);
         if(other.gameObject.CompareTag("Creature") && other.GetType() == typeof(BoxCollider2D))
         {
-            other.GetComponentInParent<CreatureController>().Food += 1f;
+            other.GetComponentInParent<CreatureController>().Reproduce();
             wc.foodTree.Remove(this.gameObject.transform);
             Destroy(this.gameObject);
         }
