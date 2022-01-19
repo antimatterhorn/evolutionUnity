@@ -30,7 +30,7 @@ public class WorldController : MonoBehaviour
     public KdTree<Transform> hazardTree = new KdTree<Transform>();
 
     private float mouseDownTime;
-    private float mouseWait = 1f;
+    private float mouseWait = 0.5f;
 
     // Start is called before the first frame update
     void Start()
