@@ -6,7 +6,7 @@ public class CreatureController : MonoBehaviour
 {
     public GameObject world;
     public GameObject creaturePrefab;
-    public int numGenes=12;
+    public int numGenes=20;
     
     public float maxSpeed=3.0f;
 
@@ -20,7 +20,7 @@ public class CreatureController : MonoBehaviour
     private float distTraveled;
 
     private int numSensors;
-    public int numInternals=4;
+    public int numInternals=9;
     private int numMotors;
 
     private WorldController worldController;
@@ -157,6 +157,7 @@ public class CreatureController : MonoBehaviour
         if(!play)
         {
             TextWriter tw = new TextWriter();
+            tw.WriteString(RawBrainDump(),"rawbrain.txt");
             tw.WriteString(BrainDump(),"brain.txt");
             //Debug.Log(BrainDump());
         }
@@ -193,8 +194,8 @@ public class CreatureController : MonoBehaviour
         AddNeuron(Sa,"02","Age");
         SenseRandom Rnd = new SenseRandom(this,worldController);
         AddNeuron(Rnd,"03","Rnd");
-        SenseFed SFd = new SenseFed(this,worldController);
-        AddNeuron(SFd,"04","Fed");
+        SenseFed SFed = new SenseFed(this,worldController);
+        AddNeuron(SFed,"04","Fed");
         SenseFoodX SFx = new SenseFoodX(this,worldController);
         AddNeuron(SFx,"05","SFx");
         SenseFoodY SFy = new SenseFoodY(this,worldController);
@@ -205,6 +206,10 @@ public class CreatureController : MonoBehaviour
         AddNeuron(SHy,"08","SHy");
         SenseAlive SAl = new SenseAlive(this,worldController);
         AddNeuron(SAl,"09","SAl");
+        // SenseFoodD SFd = new SenseFoodD(this,worldController);
+        // AddNeuron(SFd,"010","SFd");
+        // SenseHazardD SHd = new SenseHazardD(this,worldController);
+        // AddNeuron(SHd,"011","SHd");
         numSensors = 10;
 
         for (int i = 0; i < numInternals; i++)
@@ -246,6 +251,18 @@ public class CreatureController : MonoBehaviour
             i++;
         }
         return brainMap;
+    }
+
+    private string RawBrainDump()
+    {
+        string output = "";
+        int i = 0;
+        foreach (string gene in myGenome.Genes)
+        {
+            output += gene;
+            i++;
+        }
+        return output;
     }
 
     private string BrainDump()
