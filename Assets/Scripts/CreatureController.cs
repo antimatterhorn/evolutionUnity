@@ -6,22 +6,25 @@ public class CreatureController : MonoBehaviour
 {
     public GameObject world;
     public GameObject creaturePrefab;
-    public int numGenes=20;
-    
-    public float maxSpeed=3.0f;
+
+    public CreatureObject creatureObject;
 
     public Genome myGenome;
     private (string,string,float)[] myBrain;
     public Dictionary<string, dynamic> myNeurons;
 
-    private float myAge = 0f;
+    private float myAge;
     private float myFood;
     private Vector3 lastPosition;
     private float distTraveled;
 
+    
     private int numSensors;
-    public int numInternals=9;
+    private int numInternals;
     private int numMotors;
+    private int numGenes;
+    [HideInInspector]
+    public float maxSpeed;
 
     private WorldController worldController;
     
@@ -39,11 +42,16 @@ public class CreatureController : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         worldController = FindObjectOfType<WorldController>();
+
+        numInternals = creatureObject.numInternals;
+        numGenes = creatureObject.numGenes;
+
         myGenome = new Genome(numGenes);
         rigidBody = GetComponent<Rigidbody2D>();
         myNeurons = new Dictionary<string, dynamic>();
 
         myGenome.Randomize();
+        spriteRenderer.sprite = creatureObject.sprite;
         spriteRenderer.color = myGenome.Color();
         neuronDict = new Dictionary<string, string>();
         creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");

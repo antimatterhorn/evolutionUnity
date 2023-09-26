@@ -146,6 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   world: {fileID: 0}
   creaturePrefab: {fileID: 2125159067052906665}
+  creatureObject: {fileID: 11400000, guid: b015da353c147284aac9af7dc67f8acf, type: 2}
   numGenes: 14
   maxSpeed: 5
   numInternals: 5

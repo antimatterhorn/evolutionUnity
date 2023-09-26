@@ -113,3 +113,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   world: {fileID: 0}
+  foodTemplate: {fileID: 11400000, guid: 84bd377513f3843459cf828235d55f3e, type: 2}

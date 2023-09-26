@@ -5,6 +5,7 @@ using UnityEngine;
 public class FoodController : MonoBehaviour
 {
     public GameObject world;
+    public FoodObject foodTemplate;
     private WorldController wc;
     
     // Start is called before the first frame update
@@ -12,6 +13,8 @@ public class FoodController : MonoBehaviour
     {
         world = GameObject.FindGameObjectWithTag("GameController");
         wc = world.GetComponent<WorldController>();
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = foodTemplate.sprite;
     }
 
     // Update is called once per frame
@@ -25,7 +28,10 @@ public class FoodController : MonoBehaviour
         //Debug.Log(other);
         if(other.gameObject.CompareTag("Creature") && other.GetType() == typeof(BoxCollider2D))
         {
-            other.GetComponentInParent<CreatureController>().Reproduce();
+            if(foodTemplate.causesReproduction)
+            {
+                other.GetComponentInParent<CreatureController>().Reproduce();
+            }           
             wc.foodTree.Remove(this.gameObject.transform);
             Destroy(this.gameObject);
         }
