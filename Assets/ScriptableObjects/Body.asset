@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae9351ae10d852e40a0a0c41b829101a, type: 3}
   m_Name: Body
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: bfe9d5bb78966bf4390dcdff6916a8e4, type: 3}
+  sprite: {fileID: 21300000, guid: e04e5e47eab4fe64a8bd6b9387572150, type: 3}
   scale: 1
   colorValue: 0
   geneIds: []

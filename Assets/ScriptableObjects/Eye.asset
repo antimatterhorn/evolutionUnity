@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae9351ae10d852e40a0a0c41b829101a, type: 3}
   m_Name: Eye
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 66083a95a9db8754a93f105ac9ffeae3, type: 3}
+  sprite: {fileID: 21300000, guid: f703d7911c066b8418604109e1dfcb68, type: 3}
   scale: 1
   colorValue: 0
   geneIds:

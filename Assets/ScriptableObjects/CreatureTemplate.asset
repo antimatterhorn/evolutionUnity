@@ -15,7 +15,7 @@ MonoBehaviour:
   numGenes: 14
   numInternals: 4
   maxSpeed: 3
-  sprite: {fileID: 21300000, guid: e04e5e47eab4fe64a8bd6b9387572150, type: 3}
+  sprite: {fileID: 21300000, guid: 527bd9add4f0b404aaa0aa5ccad59013, type: 3}
   phenotypes:
   - {fileID: 11400000, guid: 07f8becd3ec6fe346b17c3a616556a72, type: 2}
   - {fileID: 11400000, guid: 68b9eba0b5808de4c8cfb54862775dd8, type: 2}
