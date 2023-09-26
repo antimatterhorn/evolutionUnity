@@ -10,8 +10,9 @@ public class CreatureController : MonoBehaviour
     public CreatureObject creatureObject;
 
     public Genome myGenome;
+    public NeuronCollection neuronCollection;
     private (string,string,float)[] myBrain;
-    public Dictionary<string, dynamic> myNeurons;
+    //public Dictionary<string, dynamic> myNeurons;
 
     private float myAge;
     private float myFood;
@@ -34,32 +35,37 @@ public class CreatureController : MonoBehaviour
     private bool play = true;
     private Vector2 storedVelocity;
 
-    private Dictionary<string,string> neuronDict;
+    //private Dictionary<string,string> neuronDict;
 
     private GameObject creatureCollection;
     
     void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer  = GetComponent<SpriteRenderer>();
         worldController = FindObjectOfType<WorldController>();
 
-        numInternals = creatureObject.numInternals;
-        numGenes = creatureObject.numGenes;
+        numInternals    = creatureObject.numInternals;
+        numGenes        = creatureObject.numGenes;
+        maxSpeed        = creatureObject.maxSpeed;
 
         myGenome = new Genome(numGenes);
         rigidBody = GetComponent<Rigidbody2D>();
-        myNeurons = new Dictionary<string, dynamic>();
+        //myNeurons = new Dictionary<string, dynamic>();
 
         myGenome.Randomize();
-        spriteRenderer.sprite = creatureObject.sprite;
-        spriteRenderer.color = myGenome.Color();
-        neuronDict = new Dictionary<string, string>();
+        spriteRenderer.sprite   = creatureObject.sprite;
+        spriteRenderer.color    = myGenome.Color();
+        //neuronDict = new Dictionary<string, string>();
         creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
     }
 
     void Start()
     {   
-        myBrain = PopulateBrain();
+        neuronCollection = new NeuronCollection(this,worldController,creatureObject.numInternals);
+        numSensors = neuronCollection.numSensors;
+        numMotors = neuronCollection.numMotors;
+        
+        myBrain = Brain();
     }
 
     void Update()
@@ -69,7 +75,7 @@ public class CreatureController : MonoBehaviour
         //rigidBody.rotation = 0f;
         //rigidBody.angularVelocity = 0f;
         
-        foreach (KeyValuePair<string,dynamic> neuron in myNeurons)
+        foreach (KeyValuePair<string,dynamic> neuron in neuronCollection.Neurons)
         {         
             neuron.Value.value = 0;
         }
@@ -80,10 +86,10 @@ public class CreatureController : MonoBehaviour
             // send dendrites to all neurons
             foreach ((string,string,float) dendrite in myBrain)
             {
-                myNeurons[dendrite.Item2].value += myNeurons[dendrite.Item1].call()*dendrite.Item3;
+                neuronCollection.Neurons[dendrite.Item2].value += neuronCollection.Neurons[dendrite.Item1].call()*dendrite.Item3;
             }
             // fire motor neurons
-            foreach (KeyValuePair<string,dynamic> neuron in myNeurons)
+            foreach (KeyValuePair<string,dynamic> neuron in neuronCollection.Neurons)
             {
                 if(neuron.Key[0]=="2"[0])
                     neuron.Value.call();
@@ -171,69 +177,6 @@ public class CreatureController : MonoBehaviour
         }
         
     }
-/*
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        //Debug.Log(other);
-        if(other.gameObject.CompareTag("Food"))
-        {
-            Vector3 foodPos = other.gameObject.transform.position;
-            Vector3 thisPos = this.gameObject.transform.position;
-            float d1 = (thisPos - foodPos).magnitude;
-            float d2 = (thisPos - closestFood).magnitude;
-            if(d1 < d2)
-                closestFood = foodPos;
-        }
-    }
-*/
-    private void AddNeuron(dynamic _neuron, string _id, string _name)
-    {
-        myNeurons.Add(_id, _neuron);
-        neuronDict.Add(_id,_name);
-    }
-
-    public (string,string,float)[] PopulateBrain()
-    {
-        SensePosX Pox = new SensePosX(this,worldController);
-        AddNeuron(Pox,"00","Pox");
-        SensePosY Poy = new SensePosY(this,worldController);
-        AddNeuron(Poy,"01","Poy");
-        SenseAge Sa = new SenseAge(this,worldController);
-        AddNeuron(Sa,"02","Age");
-        SenseRandom Rnd = new SenseRandom(this,worldController);
-        AddNeuron(Rnd,"03","Rnd");
-        SenseFed SFed = new SenseFed(this,worldController);
-        AddNeuron(SFed,"04","Fed");
-        SenseFoodX SFx = new SenseFoodX(this,worldController);
-        AddNeuron(SFx,"05","SFx");
-        SenseFoodY SFy = new SenseFoodY(this,worldController);
-        AddNeuron(SFy,"06","SFy");
-        SenseHazardX SHx = new SenseHazardX(this,worldController);
-        AddNeuron(SHx,"07","SHx");
-        SenseHazardY SHy = new SenseHazardY(this,worldController);
-        AddNeuron(SHy,"08","SHy");
-        SenseAlive SAl = new SenseAlive(this,worldController);
-        AddNeuron(SAl,"09","SAl");
-        // SenseFoodD SFd = new SenseFoodD(this,worldController);
-        // AddNeuron(SFd,"010","SFd");
-        // SenseHazardD SHd = new SenseHazardD(this,worldController);
-        // AddNeuron(SHd,"011","SHd");
-        numSensors = 10;
-
-        for (int i = 0; i < numInternals; i++)
-        {
-            Neuron in1 = new Neuron(this,worldController);
-            AddNeuron(in1,"1"+i.ToString(),"N"+i.ToString());
-        }
-
-        MoveX Mvx = new MoveX(this,worldController);
-        AddNeuron(Mvx, "20","Mvx");
-        MoveY Mvy = new MoveY(this,worldController);
-        AddNeuron(Mvy, "21","Mvy");
-        numMotors = 2;
-
-        return Brain();
-    }
 
     public (string,string,float)[] Brain()
     {
@@ -279,7 +222,7 @@ public class CreatureController : MonoBehaviour
         string output = "";
         foreach ((string, string, float) wire in brainMap)
         {
-            output += neuronDict[wire.Item1]+" "+neuronDict[wire.Item2]+" "+wire.Item3.ToString()+"\n";
+            output += neuronCollection.dictNeurons[wire.Item1]+" "+neuronCollection.dictNeurons[wire.Item2]+" "+wire.Item3.ToString()+"\n";
         }
         return output;
     }

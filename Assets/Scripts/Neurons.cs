@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Neuron
@@ -41,7 +39,7 @@ public class SenseAlive : Neuron
 public class SenseAge : Neuron
 {
     public SenseAge(CreatureController _creature, WorldController _world) : base (_creature, _world) {}
-    public override float call() => (creature.Age/world.epoch);
+    public override float call() => creature.Age / world.epoch;
 }
 
 public class SensePosX : Neuron
@@ -139,7 +137,7 @@ public class SenseHazardX : Neuron
         if(hazardTree.ToList().Count > 0)
         {
             Vector3 closeHazard = hazardTree.FindClosest(creature.transform.position).position;
-            Vector3 direction = (closeHazard - creature.transform.position);
+            Vector3 direction = closeHazard - creature.transform.position;
             if(direction.magnitude <=2f)
                 str = (2f - direction.x)*0.5f;
         }        
@@ -156,7 +154,7 @@ public class SenseHazardY : Neuron
         if(hazardTree.ToList().Count > 0)
         {
             Vector3 closeHazard = hazardTree.FindClosest(creature.transform.position).position;
-            Vector3 direction = (closeHazard - creature.transform.position);
+            Vector3 direction = closeHazard - creature.transform.position;
             if(direction.magnitude <=2f)
                 str = (2f - direction.y)*0.5f;
         }        
@@ -172,7 +170,7 @@ public class SenseHazardD : Neuron
         if(hazardTree.ToList().Count > 0)
         {
             Vector3 closeHazard = hazardTree.FindClosest(creature.transform.position).position;
-            Vector3 direction = (closeHazard - creature.transform.position);
+            Vector3 direction = closeHazard - creature.transform.position;
             return direction.magnitude;
             // this is not normalized properly for neurons
         }        
