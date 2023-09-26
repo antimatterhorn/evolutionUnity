@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class NeuronCollection
+public class NeuronLibrary
 {
     public int numSensors;
     public int numMotors;
@@ -9,8 +9,8 @@ public class NeuronCollection
 
     private int numInternals;
 
-    public NeuronCollection(){}
-    public NeuronCollection(CreatureController _creature, WorldController _world, int _numInternals)
+    public NeuronLibrary(){}
+    public NeuronLibrary(CreatureController _creature, WorldController _world, int _numInternals)
     {
         Neurons = new Dictionary<string, dynamic>();
         dictNeurons = new Dictionary<string, string>();

@@ -10,9 +10,8 @@ public class CreatureController : MonoBehaviour
     public CreatureObject creatureObject;
 
     public Genome myGenome;
-    public NeuronCollection neuronCollection;
+    public NeuronLibrary neuronLibrary;
     private (string,string,float)[] myBrain;
-    //public Dictionary<string, dynamic> myNeurons;
 
     private float myAge;
     private float myFood;
@@ -35,8 +34,6 @@ public class CreatureController : MonoBehaviour
     private bool play = true;
     private Vector2 storedVelocity;
 
-    //private Dictionary<string,string> neuronDict;
-
     private GameObject creatureCollection;
     
     void Awake()
@@ -50,20 +47,19 @@ public class CreatureController : MonoBehaviour
 
         myGenome = new Genome(numGenes);
         rigidBody = GetComponent<Rigidbody2D>();
-        //myNeurons = new Dictionary<string, dynamic>();
 
         myGenome.Randomize();
         spriteRenderer.sprite   = creatureObject.sprite;
         spriteRenderer.color    = myGenome.Color();
-        //neuronDict = new Dictionary<string, string>();
+
         creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
     }
 
     void Start()
     {   
-        neuronCollection = new NeuronCollection(this,worldController,creatureObject.numInternals);
-        numSensors = neuronCollection.numSensors;
-        numMotors = neuronCollection.numMotors;
+        neuronLibrary = new NeuronLibrary(this,worldController,creatureObject.numInternals);
+        numSensors = neuronLibrary.numSensors;
+        numMotors = neuronLibrary.numMotors;
         
         myBrain = Brain();
     }
@@ -72,10 +68,8 @@ public class CreatureController : MonoBehaviour
     {
         distTraveled += (this.transform.position - lastPosition).magnitude;
         spriteRenderer.color = myGenome.Color();
-        //rigidBody.rotation = 0f;
-        //rigidBody.angularVelocity = 0f;
         
-        foreach (KeyValuePair<string,dynamic> neuron in neuronCollection.Neurons)
+        foreach (KeyValuePair<string,dynamic> neuron in neuronLibrary.Neurons)
         {         
             neuron.Value.value = 0;
         }
@@ -86,10 +80,10 @@ public class CreatureController : MonoBehaviour
             // send dendrites to all neurons
             foreach ((string,string,float) dendrite in myBrain)
             {
-                neuronCollection.Neurons[dendrite.Item2].value += neuronCollection.Neurons[dendrite.Item1].call()*dendrite.Item3;
+                neuronLibrary.Neurons[dendrite.Item2].value += neuronLibrary.Neurons[dendrite.Item1].call()*dendrite.Item3;
             }
             // fire motor neurons
-            foreach (KeyValuePair<string,dynamic> neuron in neuronCollection.Neurons)
+            foreach (KeyValuePair<string,dynamic> neuron in neuronLibrary.Neurons)
             {
                 if(neuron.Key[0]=="2"[0])
                     neuron.Value.call();
@@ -173,9 +167,7 @@ public class CreatureController : MonoBehaviour
             TextWriter tw = new TextWriter();
             tw.WriteString(RawBrainDump(),"rawbrain.txt");
             tw.WriteString(BrainDump(),"brain.txt");
-            //Debug.Log(BrainDump());
-        }
-        
+        }       
     }
 
     public (string,string,float)[] Brain()
@@ -222,7 +214,7 @@ public class CreatureController : MonoBehaviour
         string output = "";
         foreach ((string, string, float) wire in brainMap)
         {
-            output += neuronCollection.dictNeurons[wire.Item1]+" "+neuronCollection.dictNeurons[wire.Item2]+" "+wire.Item3.ToString()+"\n";
+            output += neuronLibrary.dictNeurons[wire.Item1]+" "+neuronLibrary.dictNeurons[wire.Item2]+" "+wire.Item3.ToString()+"\n";
         }
         return output;
     }
