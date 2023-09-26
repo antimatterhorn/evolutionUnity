@@ -49,6 +49,7 @@ public class WorldController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
         if(!play)
         {
             startTime+=Time.deltaTime; // so that the epoch stays the same \
@@ -61,11 +62,11 @@ public class WorldController : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0) && play && (Time.time - mouseDownTime)>mouseWait)
         {
-            Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if(InWorld(position))
+            Vector3 mouseLoc = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if(InWorld(mouseLoc))
             {
-                position.z = 0;
-                GameObject newRadiation = (GameObject)Instantiate(radiationPrefab,position,Quaternion.identity);
+                mouseLoc.z = 0;
+                GameObject newRadiation = (GameObject)Instantiate(radiationPrefab,mouseLoc,Quaternion.identity);
                 newRadiation.transform.parent = radiationCollection.transform;
                 mouseDownTime = Time.time;
                 hazardTree.Add(newRadiation.transform);
