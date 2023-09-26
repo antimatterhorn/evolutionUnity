@@ -18,7 +18,6 @@ public class CreatureController : MonoBehaviour
     private Vector3 lastPosition;
     private float distTraveled;
 
-    
     private int numSensors;
     private int numInternals;
     private int numMotors;
@@ -50,6 +49,7 @@ public class CreatureController : MonoBehaviour
 
         myGenome.Randomize();
         spriteRenderer.sprite   = creatureObject.sprite;
+        Debug.Log(creatureObject.sprite.texture.height);
         spriteRenderer.color    = myGenome.Color();
 
         creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
@@ -131,7 +131,6 @@ public class CreatureController : MonoBehaviour
         Vector2 newPos = new Vector2(xpos,ypos);
         GameObject newCreature = (GameObject)Instantiate(creaturePrefab,newPos,Quaternion.identity);
         newCreature.GetComponent<CreatureController>().world = world;
-        //newCreature.GetComponent<CircleCollider2D>().radius = 4f;
         newCreature.transform.parent = creatureCollection.transform;
         newCreature.transform.localScale = new Vector3(creatureScale,creatureScale,1.0f);
 

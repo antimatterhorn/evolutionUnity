@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Creature", menuName = "Creature")]
+[CreateAssetMenu(fileName = "New Creature", menuName = "Scriptable Objects/Creature")]
 public class CreatureObject : ScriptableObject
 {
     public int numGenes=20;
@@ -10,6 +10,9 @@ public class CreatureObject : ScriptableObject
     public float maxSpeed=3.0f;
 
     public Sprite sprite;
+
+    public Phenotype[] phenotypes;
+    public Phenotype body;
     
     //private int numMotors;
     //private int numSensors;
