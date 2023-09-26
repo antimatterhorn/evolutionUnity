@@ -12,6 +12,7 @@ public class WorldController : MonoBehaviour
     public GameObject radiationPrefab;
     public float mutationRate;
     public int numCreatures;
+    public float creatureScale;
     public float foodRate;
     public float xmin;
     public float xmax;
@@ -108,7 +109,7 @@ public class WorldController : MonoBehaviour
             newCreature.GetComponent<CreatureController>().world = this.gameObject;
             //newCreature.GetComponent<CircleCollider2D>().radius = 4f;
             newCreature.transform.parent = creatureCollection.transform;
-            newCreature.transform.localScale = new Vector3(0.4f,0.4f,1.0f);
+            newCreature.transform.localScale = new Vector3(creatureScale,creatureScale,1.0f);
             if(genomes.Count>0)
             {
                 Genome parent = genomes[i%genomes.Count];

@@ -121,6 +121,7 @@ public class CreatureController : MonoBehaviour
         float xmax = worldController.xmax;
         float ymax = worldController.ymax;
 
+        float creatureScale = worldController.creatureScale;
         /*
         float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
         float ypos = Random.Range(ymin*0.9f,ymax*0.9f);
@@ -132,7 +133,7 @@ public class CreatureController : MonoBehaviour
         newCreature.GetComponent<CreatureController>().world = world;
         //newCreature.GetComponent<CircleCollider2D>().radius = 4f;
         newCreature.transform.parent = creatureCollection.transform;
-        newCreature.transform.localScale = new Vector3(0.4f,0.4f,1.0f);
+        newCreature.transform.localScale = new Vector3(creatureScale,creatureScale,1.0f);
 
         Genome child = newCreature.GetComponent<CreatureController>().Genome;
         child.Clone(myGenome);
