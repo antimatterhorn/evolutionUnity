@@ -34,6 +34,8 @@ public class CreatureController : MonoBehaviour
     private Vector2 storedVelocity;
 
     private GameObject creatureCollection;
+
+    private bool updatedSprite = false;
     
     void Awake()
     {
@@ -48,8 +50,8 @@ public class CreatureController : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
 
         myGenome.Randomize();
-        spriteRenderer.sprite   = creatureObject.sprite;
-        Debug.Log(creatureObject.sprite.texture.height);
+        spriteRenderer.sprite   = creatureObject.bodySprite;
+
         spriteRenderer.color    = myGenome.Color();
 
         creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
@@ -62,10 +64,46 @@ public class CreatureController : MonoBehaviour
         numMotors = neuronLibrary.numMotors;
         
         myBrain = Brain();
+
+
+    }
+
+    void UpdateSprite()
+    {
+        SpriteBuilder sb = new SpriteBuilder(spriteRenderer.sprite);
+        int count = 0;
+        foreach (Phenotype phenotype in creatureObject.phenotypes)
+        {
+            bool addPart = false;
+            foreach (string geneid in phenotype.geneIds)
+            {
+                foreach ((string,string,float) gene in myBrain)
+                {
+                    if (neuronLibrary.dictNeurons[gene.Item1] == geneid || neuronLibrary.dictNeurons[gene.Item2] == geneid)
+                    {
+                        addPart = true;
+                        break;
+                    }
+                }
+                if (addPart)
+                    break;
+            }
+            if (addPart)
+            {
+                sb.Add(phenotype.sprite,phenotype.r,phenotype.theta,phenotype.scale,phenotype.reflected);
+                count++;
+            }
+        }
+        spriteRenderer  = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = sb.Sprite();
+        updatedSprite = true;
     }
 
     void Update()
     {
+        if (!updatedSprite)
+            UpdateSprite();
+        
         distTraveled += (this.transform.position - lastPosition).magnitude;
         spriteRenderer.color = myGenome.Color();
         

@@ -8,6 +8,9 @@ public class Phenotype : ScriptableObject
     public float scale=1f;
     public float colorValue;
     public string[] geneIds;
+    public float r;
+    public float theta;
+    public bool reflected;
 
     private (int,int,int) min = (255,0,0);      //red
     private (int,int,int) mid = (255,255,255);  //white

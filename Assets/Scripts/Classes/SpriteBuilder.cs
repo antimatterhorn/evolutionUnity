@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class SpriteBuilder
@@ -8,37 +9,105 @@ public class SpriteBuilder
     
     private int sx,sy;
     private Sprite baseSprite;
-    private Sprite finalSprite;
     
     public SpriteBuilder(){}
-    public SpriteBuilder(Sprite _baseSprite, int _sizeX, int _sizeY)
+    public SpriteBuilder(Sprite _baseSprite)
     {
-        sx = _sizeX;
-        sy = _sizeY;
         baseSprite = _baseSprite;
+
+        sx = baseSprite.texture.width;
+        sy = baseSprite.texture.height;
+
         Resources.UnloadUnusedAssets();
     }
     
-    
-    public Sprite Add(Sprite _phenoSprite, float _x, float _y, float _scale)
+    public void Add(Sprite _phenoSprite, float _r, float _theta, float _scale)
+    {
+        Add(_phenoSprite,_r,_theta,_scale,false);
+    }
+        
+
+    public void Add(Sprite _phenoSprite, float _r, float _theta, float _scale, bool _reflect)
     {
         Sprite sprite = _phenoSprite;
         if(_scale < 1f)
-            sprite = ResizedSprite(sprite,_scale);
+            sprite = ResizeSprite(sprite,_scale);
         
+        float px = sprite.texture.width;
+        float py = sprite.texture.height;
+
+        float r = Mathf.Min(_r,sx/2f);
+        float theta = _theta*3.14159f/180f;
+
+        // convert r,theta to x,y
+        Vector2 center = new Vector2(sx/2f,sy/2f);
+        Vector2 addLoc = new Vector2(0f,0f);
+
+        addLoc = center + new Vector2(r*Mathf.Sin(theta),r*Mathf.Cos(theta));
         var newTex = new Texture2D(sx,sy);
 
         for (int x = 0; x < newTex.width; x++)
         {
             for (int y = 0; y < newTex.height; y++)
             {
-                newTex.SetPixel(x,y,new Color(1,1,1,0));
+                newTex.SetPixel(x,y,baseSprite.texture.GetPixel(x,y));
+
+                // if x y inside sprite and sprite alpha not 0
+                Vector2 sLoc = new Vector2(x-addLoc.x+(int)px/2f,y-addLoc.y+(int)py/2f);
+                if (sLoc.x >= 0 && sLoc.x < px && sLoc.y >= 0 && sLoc.y < py)
+                {
+                    Color thisColor = sprite.texture.GetPixel((int)sLoc.x,(int)sLoc.y);
+                    if (thisColor.a > 0)
+                        newTex.SetPixel(x,y,thisColor);
+                }
             }
         }
-        return baseSprite;
+        if (_reflect)
+        {
+            addLoc = center + new Vector2(-r*Mathf.Sin(theta),r*Mathf.Cos(theta));
+            for (int x = 0; x < newTex.width; x++)
+            {
+                for (int y = 0; y < newTex.height; y++)
+                {
+                    // if x y inside sprite and sprite alpha not 0
+                    Vector2 sLoc = new Vector2(x-addLoc.x+(int)px/2f,y-addLoc.y+(int)py/2f);
+                    if (sLoc.x >= 0 && sLoc.x < px && sLoc.y >= 0 && sLoc.y < py)
+                    {
+                        Color thisColor = sprite.texture.GetPixel((int)sLoc.x,(int)sLoc.y);
+                        if (thisColor.a > 0)
+                            newTex.SetPixel(x,y,thisColor);
+                    }
+                }
+            }
+        }
+        newTex.Apply();
+        baseSprite = UnityEngine.Sprite.Create(newTex, new Rect(0,0, sx, sy), new Vector2(0.5f,0.5f));
     }
 
-    public Sprite ResizedSprite(Sprite _sprite, float _scale)
+    public Sprite ResizeSprite(Sprite _sprite, float _scale)
+    {
+        int x = _sprite.texture.width;
+        int y = _sprite.texture.height;
+        
+        int newWidth = (int)(x*_scale);
+        int newHeight = (int)(y*_scale);
+        Texture2D resizedTexture = new(newWidth,newHeight);
+        for (int nx = 0; nx < newWidth; nx++)
+        {
+            for (int ny = 0; ny < newHeight; ny++)
+            {
+                int originalX = (int)Math.Round(nx/_scale);
+                int originalY = (int)Math.Round(ny/_scale);
+                resizedTexture.SetPixel(nx,ny,_sprite.texture.GetPixel(originalX,originalY));
+            }
+        }
+        resizedTexture.Apply();
+        Sprite finalSprite = UnityEngine.Sprite.Create(resizedTexture, new Rect(0,0, newWidth, newHeight), new Vector2(0.5f,0.5f));
+        finalSprite.name = _sprite.name + "_res";
+        return finalSprite;
+    }
+
+    public Sprite ResampleSprite(Sprite _sprite, float _scale, float _sigma)
     {
         int x = _sprite.texture.width;
         int y = _sprite.texture.height;
@@ -46,47 +115,59 @@ public class SpriteBuilder
         int newWidth = (int)(x*_scale);
         int newHeight = (int)(y*_scale);
         // currently this will only support scaling downward
+        int kernelSize = (int)Math.Ceiling(6f*_sigma);
+
+
         Texture2D resampledTexture = new(newWidth,newHeight);
-        for (int nx = 0; x < newWidth; nx++)
+        for (int nx = 0; nx < newWidth; nx++)
         {
-            for (int ny = 0; y < newHeight; ny++)
+            for (int ny = 0; ny < newHeight; ny++)
             {
                 float originalX = nx/_scale;
                 float originalY = ny/_scale;
 
-                int x0 = (int)Math.Floor(originalX);
-                int x1 = x0 + 1;
-                int y0 = (int)Math.Floor(originalY);
-                int y1 = y0 + 1;
+                float[] weightedSum = {0f,0f,0f,0f};
+                float norm = 0f;
 
-                if (x1 >= x || y1 >= y)
+                for (int ky = -kernelSize; ky <= kernelSize; ky++)
                 {
-                    resampledTexture.SetPixel(nx,ny,_sprite.texture.GetPixel(x0,y0));
+                    for (int kx = -kernelSize; kx <= kernelSize; kx++)
+                    {
+                        int sourceX = (int)Math.Round(originalX)+kx;
+                        int sourceY = (int)Math.Round(originalY)+ky;
+
+                        if (sourceX >= 0 && sourceX < x && sourceY >= 0 && sourceY < y)
+                        {
+                            float distance = Mathf.Sqrt(kx*kx + ky*ky);
+                            float weight = Mathf.Exp(-0.5f*(distance*distance)/(_sigma*_sigma));
+                            for (int i=0;i<4;i++)
+                            {
+                                weightedSum[i] += _sprite.texture.GetPixel(sourceX,sourceY)[i]*weight;
+                                norm += weight;
+                            }
+                        }
+                    }
+                }
+
+                if (norm > 0)
+                {
+                    for (int i=0;i<4;i++)
+                        weightedSum[i] = weightedSum[i]/norm;
+                    resampledTexture.SetPixel(nx,ny,new Color(weightedSum[0],weightedSum[1],weightedSum[2],weightedSum[3]));
                 }
                 else
-                {
-                    float fractionX = originalX - x0;
-                    float fractionY = originalY - y0;
-                    Color colorTopLeft = _sprite.texture.GetPixel(x0,y0);
-                    Color colorTopRight = _sprite.texture.GetPixel(x1,y0);
-                    Color colorBottomLeft = _sprite.texture.GetPixel(x0,y1);
-                    Color colorBottomRight = _sprite.texture.GetPixel(x1,y1);
-                    float[] vals1 = new float[3];
-                    float[] vals2 = new float[3];
-                    Color nColor = new(1,1,1,0);
-                    for (int i=0;i<4;i++)
-                    {
-                        vals1[i] = colorTopLeft[i] * (1f-fractionX) + colorTopRight[i]*fractionX;
-                        vals2[i] = colorBottomLeft[i] * (1f-fractionX) + colorBottomRight[i]*fractionX;
-                        nColor[i] = vals1[i] * (1f-fractionY) + vals2[i]*fractionY;
-                    }
-                    resampledTexture.SetPixel(nx,ny,nColor);                
-                }
+                    resampledTexture.SetPixel(nx,ny,new Color(0,0,0,0));        
+                
             }
         }
         resampledTexture.Apply();
-        Sprite finalSprite = Sprite.Create(resampledTexture, new Rect(0,0,newWidth,newHeight), new Vector2(0.5f,0.5f));
+        Sprite finalSprite = UnityEngine.Sprite.Create(resampledTexture, new Rect(0,0, newWidth, newHeight), new Vector2(0.5f,0.5f));
         finalSprite.name = _sprite.name + "_res";
         return finalSprite;
+    }
+
+    public Sprite Sprite()
+    {
+        return baseSprite;
     }
 }

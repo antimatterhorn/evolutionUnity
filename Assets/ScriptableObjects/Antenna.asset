@@ -15,6 +15,7 @@ MonoBehaviour:
   sprite: {fileID: 0}
   scale: 1
   colorValue: 0
-  geneIds:
-  - SFx
-  - SFy
+  geneIds: []
+  r: 30
+  theta: 10
+  reflected: 1

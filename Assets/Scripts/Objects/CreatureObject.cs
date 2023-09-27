@@ -9,10 +9,9 @@ public class CreatureObject : ScriptableObject
     
     public float maxSpeed=3.0f;
 
-    public Sprite sprite;
+    public Sprite bodySprite;
 
     public Phenotype[] phenotypes;
-    public Phenotype body;
     
     //private int numMotors;
     //private int numSensors;

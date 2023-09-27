@@ -440,7 +440,7 @@ MonoBehaviour:
   radiationCollection: {fileID: 646162414}
   radiationPrefab: {fileID: 5808050228543928661, guid: c683471929a7cf14ebb9b6ae551b08b4, type: 3}
   mutationRate: 0.05
-  numCreatures: 300
+  numCreatures: 50
   creatureScale: 0.4
   foodRate: 30
   xmin: -8
