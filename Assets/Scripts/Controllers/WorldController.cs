@@ -10,6 +10,7 @@ public class WorldController : MonoBehaviour
     public GameObject foodPrefab;
     public GameObject radiationCollection;
     public GameObject radiationPrefab;
+    public GameObject lens;
     public float mutationRate;
     public int numCreatures;
     public float creatureScale;
@@ -44,6 +45,7 @@ public class WorldController : MonoBehaviour
         breedCorner1 = new Vector2(xmin/2,ymax/2);
         breedCorner2 = new Vector2(xmax/2,ymin/2);
 
+        lens.active = false;
         mouseDownTime = Time.time;
     }
 

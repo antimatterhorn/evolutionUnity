@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Eye
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: f703d7911c066b8418604109e1dfcb68, type: 3}
-  scale: 0.5
+  scale: 0.75
   colorValue: 0
   geneIds:
   - SHx
   - SHy
-  r: 20
-  theta: 30
+  r: 15
+  theta: 45
   reflected: 1

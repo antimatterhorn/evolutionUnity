@@ -12,7 +12,7 @@ public class CreatureObject : ScriptableObject
     public Sprite bodySprite;
 
     public Phenotype[] phenotypes;
-    
+
     //private int numMotors;
     //private int numSensors;
 

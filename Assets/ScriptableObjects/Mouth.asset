@@ -18,6 +18,6 @@ MonoBehaviour:
   geneIds:
   - SFx
   - SFy
-  r: 5
-  theta: 175
+  r: 8
+  theta: 170
   reflected: 0

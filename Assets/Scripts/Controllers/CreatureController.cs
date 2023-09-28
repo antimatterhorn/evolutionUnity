@@ -33,7 +33,7 @@ public class CreatureController : MonoBehaviour
     private bool play = true;
     private Vector2 storedVelocity;
 
-    private GameObject creatureCollection;
+    //private GameObject creatureCollection;
 
     private bool updatedSprite = false;
     
@@ -49,12 +49,13 @@ public class CreatureController : MonoBehaviour
         myGenome = new Genome(numGenes);
         rigidBody = GetComponent<Rigidbody2D>();
 
-        myGenome.Randomize();
+        // this activates for all creatures, but child creatures have their genes overwritten
+        myGenome.Randomize(); 
+        
         spriteRenderer.sprite   = creatureObject.bodySprite;
-
         spriteRenderer.color    = myGenome.Color();
 
-        creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
+        //creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
     }
 
     void Start()
@@ -101,8 +102,8 @@ public class CreatureController : MonoBehaviour
 
     void Update()
     {
-        if (!updatedSprite)
-            UpdateSprite();
+        // if (!updatedSprite)
+        //     UpdateSprite();
         
         distTraveled += (this.transform.position - lastPosition).magnitude;
         spriteRenderer.color = myGenome.Color();
@@ -168,8 +169,9 @@ public class CreatureController : MonoBehaviour
         float ypos = this.transform.position.y + Random.Range(-0.05f,0.05f);
         Vector2 newPos = new Vector2(xpos,ypos);
         GameObject newCreature = (GameObject)Instantiate(creaturePrefab,newPos,Quaternion.identity);
+        newCreature.name = "Child";
         newCreature.GetComponent<CreatureController>().world = world;
-        newCreature.transform.parent = creatureCollection.transform;
+        newCreature.transform.parent = this.transform.parent;
         newCreature.transform.localScale = new Vector3(creatureScale,creatureScale,1.0f);
 
         Genome child = newCreature.GetComponent<CreatureController>().Genome;
