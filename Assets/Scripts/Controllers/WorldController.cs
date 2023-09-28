@@ -45,7 +45,7 @@ public class WorldController : MonoBehaviour
         breedCorner1 = new Vector2(xmin/2,ymax/2);
         breedCorner2 = new Vector2(xmax/2,ymin/2);
 
-        lens.active = false;
+        lens.SetActive(false);
         mouseDownTime = Time.time;
     }
 

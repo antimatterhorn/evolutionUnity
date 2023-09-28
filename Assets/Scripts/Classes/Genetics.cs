@@ -66,7 +66,6 @@ public class Genome
 
     public float Strength(string gene)
     {
-        //System.Convert.ToDouble(gene.Substring(16,16),)/8000f;
         long i = System.Convert.ToInt64(gene.Substring(16,16),2);
         float str = (float)i/8000f-4f;
         if(Mathf.Abs(str)>4)
@@ -84,7 +83,7 @@ public class Genome
             int newBit = (int)(1-System.Convert.ToInt32(gene.Substring(b,1),2));
             string newGene = "";
             for(int i=0;i<GeneLength;i++)
-                newGene += (i==b ? newBit.ToString() : gene.Substring(i,1));
+                newGene += i==b ? newBit.ToString() : gene.Substring(i,1);
             Genes[g] = newGene;
         }
     }
@@ -93,16 +92,12 @@ public class Genome
     {
         string geneString = "";
         foreach (string gene in Genes)
-        {
             geneString += gene + "\n";
-        }
         return geneString;
     }
     public void Clone(Genome parent)
     {
         for(int i=0;i<NumGenes;i++)
-        {
             Genes[i] = parent.Genes[i].ToString();
-        }
     }  
 }

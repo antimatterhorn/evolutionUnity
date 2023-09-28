@@ -33,8 +33,6 @@ public class CreatureController : MonoBehaviour
     private bool play = true;
     private Vector2 storedVelocity;
 
-    //private GameObject creatureCollection;
-
     private bool updatedSprite = false;
     
     void Awake()
@@ -54,8 +52,6 @@ public class CreatureController : MonoBehaviour
         
         spriteRenderer.sprite   = creatureObject.bodySprite;
         spriteRenderer.color    = myGenome.Color();
-
-        //creatureCollection = GameObject.FindGameObjectWithTag("CreatureCollection");
     }
 
     void Start()
@@ -108,25 +104,20 @@ public class CreatureController : MonoBehaviour
         distTraveled += (this.transform.position - lastPosition).magnitude;
         spriteRenderer.color = myGenome.Color();
         
-        foreach (KeyValuePair<string,dynamic> neuron in neuronLibrary.Neurons)
-        {         
+        foreach (KeyValuePair<string,dynamic> neuron in neuronLibrary.Neurons)       
             neuron.Value.value = 0;
-        }
 
         if(play)
         {
             myAge += Time.deltaTime;
             // send dendrites to all neurons
             foreach ((string,string,float) dendrite in myBrain)
-            {
                 neuronLibrary.Neurons[dendrite.Item2].value += neuronLibrary.Neurons[dendrite.Item1].call()*dendrite.Item3;
-            }
+
             // fire motor neurons
             foreach (KeyValuePair<string,dynamic> neuron in neuronLibrary.Neurons)
-            {
                 if(neuron.Key[0]=="2"[0])
                     neuron.Value.call();
-            }
 
             if(worldController.radiationHazards.Count > 0)
             {
@@ -137,34 +128,21 @@ public class CreatureController : MonoBehaviour
                     if(dist<2f)
                     {
                         float a = 10f;
-                        float b = -0.5f*Mathf.Log(1f/a,Mathf.Exp(1f));
-                        float fac = a*Mathf.Exp(-b*dist);
+                        float fac = Mathf.Pow(a,1-dist/2)-0.99f;
                         myAge += Time.deltaTime*fac;
                     }
                 }
             }
 
             if(myAge > worldController.epoch)
-            //if((myAge > world.GetComponent<WorldController>().epoch) || (distTraveled > 2f*(world.GetComponent<WorldController>().xmax-world.GetComponent<WorldController>().xmin)))
-            {
                 Destroy(this.gameObject);
-            }
         }
         lastPosition = this.transform.position;
     }
 
     public void Reproduce()
     {
-        float xmin = worldController.xmin;
-        float ymin = worldController.ymin;
-        float xmax = worldController.xmax;
-        float ymax = worldController.ymax;
-
         float creatureScale = worldController.creatureScale;
-        /*
-        float xpos = Random.Range(xmin*0.9f,xmax*0.9f);
-        float ypos = Random.Range(ymin*0.9f,ymax*0.9f);
-        */
         float xpos = this.transform.position.x + Random.Range(-0.05f,0.05f);
         float ypos = this.transform.position.y + Random.Range(-0.05f,0.05f);
         Vector2 newPos = new Vector2(xpos,ypos);
@@ -253,9 +231,7 @@ public class CreatureController : MonoBehaviour
         (string,string,float)[] brainMap = Brain();
         string output = "";
         foreach ((string, string, float) wire in brainMap)
-        {
             output += neuronLibrary.dictNeurons[wire.Item1]+" "+neuronLibrary.dictNeurons[wire.Item2]+" "+wire.Item3.ToString()+"\n";
-        }
         return output;
     }
 
