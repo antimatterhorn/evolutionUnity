@@ -439,6 +439,7 @@ MonoBehaviour:
   foodPrefab: {fileID: 5423648679281181916, guid: ce5d5848db5d421408dcdfb554b0117a, type: 3}
   radiationCollection: {fileID: 646162414}
   radiationPrefab: {fileID: 5808050228543928661, guid: c683471929a7cf14ebb9b6ae551b08b4, type: 3}
+  lens: {fileID: 2032814792}
   mutationRate: 0.05
   numCreatures: 50
   creatureScale: 0.4
